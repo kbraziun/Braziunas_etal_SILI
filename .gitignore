@@ -1,0 +1,8 @@
+# files not to be tracked
+*.DS_Store
+*.ini
+.Rproj.user
+*.Rproj
+.Rhistory
+.RData
+.Ruserdata

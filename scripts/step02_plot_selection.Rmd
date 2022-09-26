@@ -1,0 +1,509 @@
+---
+title: "SI/LI Plot Selection"
+author: "Kristin Braziunas"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+## Purpose
+
+The purpose of this script is to randomly select field plots at pre-identified sites. The first step in plot selection was implemented in ArcGIS Desktop using the `processed_data/rdnbr_reburns_all.tif` raster to identify promising sites where areas of short- and long-interval stand-replacing fire was in close proximity.
+
+Plot selection at these sites was then in this script. Sampling sites were first delineated based on the selected point location and usually a 500 m buffer (extended up to 1000 m if needed); plot pairs were then located within a sampling site, meaning almost all plot pairs were < 1000 m apart.
+
+```{r load-libs, results="hide", message=FALSE, warning=FALSE}
+# load libraries
+library(rgdal)
+library(sp)
+library(raster)
+library(rgeos)
+library(sf)
+library(dplyr)
+library(MatchIt)
+```
+
+## 1-4. Plot selection
+
+Short-interval plot locations within a site were selected using one of three approaches:
+
+- If previous short-interval plots had been established and were going to be resampled, as was the case with the Berry reburn of the Glade and the Maple reburn of the North Fork fires, these were used as short-interval plot locations.
+- If the first fire occurred before Landsat-derived MTBS burn severity was available, I hand-digitized areas of stand-replacing fire or unburned forest within the first fire perimeter using Google Earth Pro. These hand-digitized perimeters were used to mask the burn severity raster before randomly selecting short-interval plots at each site. Short-interval plots were at least 30 m from the edge of a patch of stand-replacing fire.
+- If both fires were in the MTBS record, I randomly selected up to 5 short-interval plots at each site. Short-interval plots were at least 30 m from the edge of a patch of fire that had burned at high severity in at least one of the two fires and moderate-to-high severity in the other. All short-interval plots burned as stand-replacing fire in the most recent fire.
+
+Long-interval plot pairs were then identified within a site based on similar topographic conditions of areas that had burned only in the most recent fire as stand-replacing fire. Topographic variables considered included aspect, elevation, and slope. Matching was based on propensity scores (Butsic et al. 2017 Basic and Applied Ecology, see citation in paper).
+
+In the Derby reburn of the Iron Mountain fire, I also excluded areas that had been managed after the fire during the process of plot selection.
+
+Final plot selection occurred in the field. First the SI plot was visited to ensure it represented SI conditions within the full plot; if this was not the case, the plot center was moved to represent these conditions or the next randomly selected SI plot was visited. Plots were generally visited in order of random selection unless access was an issue. Then, the LI plot pairs were visited in the matched order (most closely matched first), vetted to ensure they represented LI conditions and similar topographic conditions (slope, aspect, elevation), and moved or excluded if this was not the case.
+
+```{r load-data, results="hide", message=FALSE, warning=FALSE}
+
+#####
+# 1. Load master burn severity raster
+#####
+
+sev.sum <- raster("processed_data/fire_selection/rdnbr_reburns_all.tif")
+
+#####
+# 2. Read in fires and generate topographic variables used in plot matching
+#####
+
+### final selected fires
+fire.final <- read.csv("processed_data/fire_selection/fire_intersection_df_final.csv")
+
+### load topographic information
+gye.shp <- st_read("data/nr_gye/GYE_outline.shp")
+
+gye.dem <- raster("data/nr_gye/nr_dem_utm_30m.tif") %>%
+  crop(gye.shp)
+
+gye.slope <- terrain(gye.dem, opt="slope", unit="degrees", neighbors=8)
+
+gye.aspect_deg <- terrain(gye.dem, opt="aspect", unit="degrees", neighbors=8)
+
+# transform aspect to ne-ness
+deg2rad <- function(deg) {(deg * pi) / (180)}
+gye.aspect_ne <- cos(deg2rad(45-gye.aspect_deg)) + 1
+
+gye.topo <- stack(gye.dem, gye.slope,gye.aspect_ne,gye.aspect_deg)
+names(gye.topo) <- c("elevation_m","slope_deg","aspect","aspect_deg")
+
+#####
+# 3. Functions for plot selection
+#####
+
+### function to select LI pairs for a list of SI plot locations
+match_li_plots <- function(short.in, long.in) {
+  
+  short.topo <- short.in
+  long.topo <- long.in
+  
+  # output dataframe
+  sub.out <- data.frame()
+  
+  # iterate through each SI plot location
+  for(i in 1:dim(short.topo)[1]) {
+    # subset to single short-interval point
+    plot.pair <- rbind(short.topo[i,],long.topo) %>%
+      mutate(plot_index = i,
+             interval_class = as.numeric(as.factor(interval))-1) 
+    
+    # match aspect first, since more variable at fine scales
+    # match up to 30, reduce later to 3
+    match_aspect <- matchit(interval_class~aspect, method="nearest", data=plot.pair, distance="glm", link="probit",discard="none",ratio=30)
+    
+    # extract matched values
+    sub_aspect <- match.data(match_aspect, drop.unmatched=TRUE) %>%
+      dplyr::select(-c(distance:subclass))
+    
+    # then match with elevation and slope as well
+    # save top 3 matches
+    match_all <- matchit(interval_class~aspect+elevation_m+slope_deg,method="nearest",data=sub_aspect,distance="glm",link="probit",discard="none",ratio=3)
+    
+    # extract matched values
+    # add order of closest match
+    sub_all <- get_matches(match_all, id="id") %>%
+      mutate(order=1:nrow(.)-1) %>%
+      # remove unneeded columns
+      dplyr::select(c(plot_index,interval,order,x,y,elevation_m:aspect_deg))
+    
+    # add to output dataframe
+    sub.out <- rbind(sub.out,sub_all)
+    
+  }
+  
+  return(sub.out)
+  
+}
+
+
+### function to select SI and LI plots
+# select.type switches between different scenarios including both fires in mtbs and random SI plot selection (random), first fire pre-mtbs record (pre-mtbs), and pre-existing SI points (pre-selected)
+# if both fires in mtbs record, use moderate and high severity fire raster to buffer SI plot distance from edge
+select_pairs <- function(name.in,sites.in, sev.in, sevmh.in=NULL, npts, select.type, buff.in=500, gbuffer.in=-30) {
+  
+  fire.out <- data.frame()
+  
+  # iterate through each pre-selected site 
+  for(j in 1:dim(sites.in)[1]) {
+    
+    print(paste0("site ",j))
+    
+    if(select.type=="random") { # if both fires in mtbs record and random SI plot selection
+
+      # buffer each site with 500 m by default or custom buffer amount
+      site.buff <- st_buffer(sites.in[j,], buff.in)
+      
+      # crop and mask modhi severity raster first
+      # to identify core area of short interval that burned at
+      # either mod x hi or hi x hi severity
+      site.modhi <- sevmh.in %>%
+        crop(site.buff) %>%
+        mask(site.buff)
+      
+      # identify core area of short interval for plot selection
+      # only coded as 8 in this raster
+      short.core <- site.modhi
+      values(short.core)[values(short.core)!=8] <- NA
+      
+      site.core <- short.core %>%
+        # convert to polygons for random point selection
+        rasterToPolygons(dissolve=TRUE) %>%
+        # use buffer to avoid selecting plots at edges
+        gBuffer(width=gbuffer.in)
+      
+      # crop and mask hi severity raster only using core area
+      site.sev <- sev.in %>%
+        crop(site.buff)
+      
+      # only coded as 8 in this raster
+      short.sev <- site.sev
+      values(short.sev)[values(short.sev)!=8] <- NA
+      
+      site.short <- short.sev %>%
+        # convert to polygons for random point selection
+        rasterToPolygons(dissolve=TRUE) %>%
+        # mask with core polys
+        raster::intersect(site.core)
+      
+      # choose random SI points
+      short.samp <- spsample(site.short, n=npts, type="random") %>%
+        # transform to dem crs
+        spTransform(CRSobj = crs(gye.dem))
+      
+      # extract values for nearest topo features
+      short.topo1 <- raster::extract(gye.topo, short.samp, cellnumbers=TRUE) %>%
+        as.data.frame() %>%
+        rename(cell=cells)
+      
+      # match up with xy values for centroid of dem raster
+      short.topo <- cbind(short.topo1,xyFromCell(gye.topo,c(short.topo1$cell))) %>%
+        mutate(interval="short")
+      
+    } else if(select.type=="pre-mtbs") { # if first fire is not in mtbs record
+      
+      # buffer each site with 500 m by default or custom buffer amount
+      site.buff <- st_buffer(sites.in[j,], buff.in)
+      
+      # crop and mask severity raster by short and long interval
+      site.sev <- sev.in %>%
+        crop(site.buff) %>%
+        mask(site.buff)
+      
+      # identify core area of short interval for plot selection
+      # only coded as 8
+      short.sev <- site.sev
+      values(short.sev)[values(short.sev)!=8] <- NA
+      
+      site.short <- short.sev %>%
+        # convert to polygons for random point selection
+        rasterToPolygons(dissolve=TRUE) %>%
+        # use buffer to avoid selecting plots at edges
+        gBuffer(width=gbuffer.in) 
+      
+      # choose random SI points
+      short.samp <- spsample(site.short, n=npts, type="random") %>%
+        # transform to dem crs
+        spTransform(CRSobj = crs(gye.dem))
+      
+      # extract values for nearest topo features
+      short.topo1 <- raster::extract(gye.topo, short.samp, cellnumbers=TRUE) %>%
+        as.data.frame() %>%
+        rename(cell=cells)
+      # match up with xy values for centroid of dem raster
+      short.topo <- cbind(short.topo1,xyFromCell(gye.topo,c(short.topo1$cell))) %>%
+        mutate(interval="short")
+    
+    } else if(select.type=="pre-selected") { # if SI plot already established in previous study
+      
+      # create spatial points
+      short.samp <- st_as_sf(sites.in[j,], coords=c("x","y"), crs=26912)
+      
+      # assign topo values measured in plots
+      short.topo <- sites.in[j,] %>%
+        dplyr::select(c(cell, elevation_m, slope_deg, aspect, aspect_deg, x, y, interval))
+      
+      # use these points to crop severity raster
+      fire.buff <- short.samp %>%
+        st_transform(crs=crs(sev.in)) %>%
+        st_buffer(dist=1000)
+      sev.sub <- crop(sev.in, fire.buff)
+
+      sev.insub <- sev.sub
+      
+      # buffer each point with 500 m or custom value
+      site.buff <- short.samp %>%
+        st_transform(crs=crs(sev.in)) %>%
+        st_buffer(buff.in)
+      
+      # crop and mask severity raster by short and long interval
+      site.sev <- sev.insub %>%
+        crop(site.buff) %>%
+        mask(site.buff)
+      
+    }
+    
+    # identify core area of long interval
+    # only coded as 4
+    long.sev <- site.sev
+    values(long.sev)[values(long.sev)!=4] <- NA
+    
+    site.long <- long.sev %>%
+      # convert to polygons for point selection
+      rasterToPolygons(dissolve=TRUE) %>%
+      # use buffer to avoid selecting plots at edges
+      gBuffer(width=gbuffer.in) %>%
+      spTransform(CRSobj=crs(gye.topo))
+    
+    # extract values for topo features
+    long.topo1 <- raster::extract(gye.topo, site.long, cellnumbers=TRUE) %>%
+      as.data.frame() 
+    # match up with xy values for centroid of dem
+    long.topo <- cbind(long.topo1,xyFromCell(gye.topo,c(long.topo1$cell))) %>%
+      mutate(interval="long")
+    
+    # match with li pairs
+    sub.out <- match_li_plots(short.topo,long.topo)
+    
+    # set plot_index to site for pre-selected plots
+    if(select.type=="pre-selected") {
+      sub.out$plot_index = j
+    }
+    
+    fire.out <- rbind(fire.out,cbind(data.frame(fire=name.in,site=paste0("site_",j)),sub.out))
+    
+  }
+  
+  return(fire.out)
+  
+}
+
+
+### function to use hand-digitized perimeters from Google Earth imagery for fires before the MTBS record
+# depending on the situation, some fires have digitized areas within second fire where first fire was stand-replacing (potential SI fire)
+# some fires have digitized islands within these SI shapefiles where the first fire was not stand-replacing (NSI within potential SI fire)
+# some fires have digitized areas where forest was unburned in first fire (potential LI fire)
+pre_mtbs_fires <- function(fire.in, seed.in, li.in=TRUE, nsi.in=FALSE) {
+  
+  # read in digitized SI area
+  fire.si <- st_read(paste0("data/GoogleEarth_standReplacingPolygons/",fire.in,"/",fire.in,"_standReplacingPoly.shp")) %>%
+    st_transform(crs=crs(sev.sum))
+  
+  # crop and recode severity raster based on SI or SI + NSI within
+  if(nsi.in==FALSE) {
+    # buffer around point
+    fire.buff <- st_buffer(fire.si, dist=600)
+    
+    # get severity
+    sev.sub <- crop(sev.sum, fire.buff)
+
+    # mask based on digitized areas of stand-replacing fire
+    sev.si <- mask(sev.sub, st_zm(fire.si)) 
+    
+  } else if(nsi.in==TRUE) {
+    # read in area
+    fire.nsi <- st_read(paste0("data/GoogleEarth_standReplacingPolygons/",fire.in,"/",fire.in,"_nonStandReplacingPoly.shp")) %>%
+      st_transform(crs=crs(sev.sum))
+    
+    # buffer around point
+    fire.buff <- st_buffer(fire.si, dist=600)
+    
+    # get severity
+    sev.sub <- crop(sev.sum, fire.buff)
+
+    # mask based on digitized areas of stand-replacing fire
+    sev.si <- mask(sev.sub, st_zm(fire.si)) %>%
+      mask(st_zm(fire.nsi), inverse=TRUE)
+    
+  }
+  
+  # include SI outside the perimeter
+  values(sev.si)[values(sev.si) !=8] <- 8
+  
+  # identify areas of li fire
+  if(li.in == FALSE) {
+    # mask out SI
+    sev.li <- mask(sev.sub, st_zm(fire.si), inverse=TRUE)
+    values(sev.li)[values(sev.li) !=4] <- NA
+    
+  } else if(li.in == TRUE) {
+    
+    fire.li <- st_read(paste0("data/GoogleEarth_standReplacingPolygons/",fire.in,"/",fire.in,"_longIntervalPoly.shp")) %>%
+      st_transform(crs=crs(sev.sum))
+    
+    # only li fire
+    sev.li1 <- sev.sub
+    values(sev.li1)[values(sev.li1) !=4] <- NA
+    
+    # also add li in reburned area
+    sev.li2 <- mask(sev.sub, st_zm(fire.li))
+    values(sev.li2)[values(sev.li2) !=4] <- 4
+    
+    # stack
+    sev.li <- stack(sev.li1,sev.li2)
+  }
+  
+  # final severity raster
+  sev.in <- max(stack(sev.si,sev.li), na.rm=TRUE) 
+  plot(sev.in)
+  
+  # read in pre-selected sites
+  sites.in <- st_read("processed_data/plot_selection/paired_sites_all.shp") %>%
+    st_transform(crs=crs(sev.sum)) %>%
+    filter(name %in% c(fire.in))
+  
+  # name for output
+  name.in <- fire.in
+  
+  # identify random points and pairs
+  set.seed(seed.in)
+  premtbs.out <- select_pairs(name.in=name.in,sites.in=sites.in, sev.in=sev.in, npts=5, select.type="pre-mtbs")
+  # can ignore warnings, enough info to hone in on good pairs
+  
+  return(premtbs.out)
+  
+}
+```
+
+```{r plot-selection, eval=FALSE}
+#####
+# 4. Implement plot selection
+#####
+
+# rerun to get seed as needed
+sample(1:1000,1)
+
+### pre mtbs first fire plot selection
+waterMoran.out <- pre_mtbs_fires(fire.in="Waterfalls_Moran", seed.in=341, li.in=TRUE, nsi.in=FALSE)
+astTern.out <- pre_mtbs_fires(fire.in="Astringent_Tern", seed.in=586, li.in=TRUE, nsi.in=FALSE)
+mystBear.out <- pre_mtbs_fires(fire.in="Mystic_BearpawBay", seed.in=184, li.in=FALSE, nsi.in=TRUE)
+
+### pre-selected SI points, previously established and sampled plots
+# Berry reburn of Glade
+# load existing points
+si.in <- read.table("data/Turner_etal2016/raw_data/Plots.txt") %>%
+  filter(V1 == "BerryGlade", V2 == "Reburn") %>%
+  mutate(name = "Berry_Glade", interval="short") %>%
+  rename(x=V6, y=V7, aspect_deg = V8, slope_deg = V9, elevation_m = V10) %>%
+  # transform aspect
+  mutate(aspect = cos(deg2rad(45-aspect_deg)) + 1,
+         cell = 1:nrow(.))
+
+gladeBerry.out <- select_pairs(name.in="Glade_Berry",sites.in=si.in, sev.in=sev.sum, npts=5, select.type="pre-selected")
+
+# Maple reburn of N Fork
+# load existing points
+si.in <- read.table("data/Turner_etal2016/raw_data/Plots.txt") %>%
+  filter(V1 == "MapleNFork", V2 == "Reburn") %>%
+  mutate(name = "Maple_NFork", interval="short") %>%
+  rename(x=V6, y=V7, aspect_deg = V8, slope_deg = V9, elevation_m = V10) %>%
+  # transform aspect
+  mutate(aspect = cos(deg2rad(45-aspect_deg)) + 1,
+         cell = 1:nrow(.))
+
+# search larger area
+# decrease distance to edge buffer
+mapleNFork.out <- select_pairs(name.in="NFork_Maple",sites.in=si.in, sev.in=sev.sum, npts=5, select.type="pre-selected", buff.in=1000, gbuffer.in=-20)
+
+### compile points thus far
+pairs.out <- rbind(waterMoran.out,
+                   astTern.out,
+                   mystBear.out,
+                   gladeBerry.out,
+                   mapleNFork.out)
+
+### both fires in mtbs record
+# select for everything except above fires, IronMtn-Derby (because need to mask management), and Rathbone-Bacon Rind (needs larger buffer)
+sites.in <- st_read("processed_data/plot_selection/paired_sites_all.shp") %>%
+  st_transform(crs=crs(sev.sum)) %>%
+  filter(!name %in% unique(pairs.out$fire)) %>%
+  # fires run individually
+  filter(!name %in% c("IronMtn_Derby","Rathbone_BaconRind")) %>%
+  # also remove fires that did not make the final cut
+  filter(!name %in% c("Sulphur_Tern","Sulphur_Pelican","Sulphur_LeHardy"))
+
+# create severity raster where mod x hi and hi x hi lumped together
+sev.modhi <- reclassify(sev.sum, matrix(c(3.5,4.5,4,6.5,8.5,8)))
+# check this in arc
+# writeRaster(sev.modhi, "processed_data/fire_selection/rdnbr_mod_hi_lumped.tif")
+
+set.seed(515)
+mtbs.sel <- lapply(unique(as.character(sites.in$name)), 
+                   function(x) select_pairs(name.in=x, sites.in=sites.in[sites.in$name==x,], sev.in=sev.sum, 
+                                            sevmh.in = sev.modhi, npts=5, select.type="random"))
+
+mtbs.out <- as.data.frame(do.call(rbind,mtbs.sel))
+
+### rathbone-bacon rind
+# read in 
+sites.in <- st_read("processed_data/plot_selection/paired_sites_all.shp") %>%
+  st_transform(crs=crs(sev.sum)) %>%
+  filter(name %in% c("Rathbone_BaconRind"))
+
+# need larger buffer
+set.seed(515)
+rathboneBR.out <- select_pairs("Rathbone_BaconRind",sites.in=sites.in, sev.in=sev.sum,
+                               sevmh.in = sev.modhi, npts=5, select.type="random", buff.in=1000)
+```
+
+```{r iron-mtn-plot-selection, results="hide",message=FALSE,warning=FALSE}
+# show outputs for iron mtn-derby plot selection as example
+
+# create severity raster where mod x hi and hi x hi lumped together
+# copied from above because previous chunk not evaluated
+sev.modhi <- reclassify(sev.sum, matrix(c(3.5,4.5,4,6.5,8.5,8)))
+
+### iron mtn-derby, need to account for management
+# read in
+sites.in <- st_read("processed_data/plot_selection/paired_sites_all.shp") %>%
+  st_transform(crs=crs(sev.sum)) %>%
+  filter(name %in% c("IronMtn_Derby")) 
+
+# only 2 sites outside of all managed area
+sites.in <- sites.in[c(1:2),]  
+
+# use this to crop severity raster
+# use this to crop and recode severity raster
+fire.buff <- st_buffer(sites.in, dist=600)
+sev.sub <- crop(sev.sum, fire.buff)
+plot(sev.sub)
+
+# also modhi raster
+sevmh.sub <- crop(sev.modhi, fire.buff)
+
+# mask out areas that have been managed
+derby.aea <- st_read("data/CGNF/CGNF_mgmt/4431_Derby.shp") %>%
+  st_transform(crs = crs(sev.sub))
+
+derby2.aea <- st_read("data/CGNF/CGNF_mgmt/FACTS2017_IronDerby.shp") %>%
+  st_transform(crs=crs(sev.sub)) %>%
+  filter(!ACTIVITY %in% c("Natural Changes (excludes fire)","Wildfire - Human Ignition","Wildfire - Fuels Benefit","Wildfire - Natural Ignition"))
+
+plot(sev.sub)
+plot(derby.aea, add=TRUE)
+plot(derby2.aea,add=TRUE)
+
+sev.in <- mask(mask(sev.sub, derby.aea, inverse=TRUE), derby2.aea, inverse=TRUE)
+sevmh.in <- mask(mask(sevmh.sub, derby.aea, inverse=TRUE),derby2.aea,inverse=TRUE)
+
+plot(sev.in)
+plot(sevmh.in)
+
+# select plot pairs
+set.seed(667)
+ironmtnDerby.out <- select_pairs(name.in="IronMtn_Derby", sites.in=sites.in, sev.in=sev.in,
+                                 sevmh.in = sevmh.in, npts=5, select.type="random")
+
+### combine all pairs and write out - commented out for Rmd
+# pairs.final <- rbind(pairs.out, 
+#                   mtbs.out,
+#                   rathboneBR.out,
+#                   ironmtnDerby.out)
+
+### write out - commented out for Rmd
+# write.csv(pairs.final,"processed_data/plot_selection/final_plot_pair_selection.csv")
+```

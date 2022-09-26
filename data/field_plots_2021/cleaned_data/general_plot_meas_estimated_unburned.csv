@@ -1,0 +1,45 @@
+Plot_code,Fire_interval,SF1_azimuth,Easting,Northing,Aspect_deg,Slope_deg,Elev_m,Unburned_dist_m,Unburned_slope_deg,Seed_source_dist_m,Seed_source_slope_deg,Unburned_dist_est_m,Notes
+Mystic_BearpawBay_1_1_short_0,Short,5,525262,4851708,42,4.8,2139,292,3.9,105,1.7,292,NA
+Mystic_BearpawBay_1_1_long_1,Long,5,525211,4851566,52,4.4,2135,492,1.9,492,1.9,492,NA
+Wilcox_Berry_1_1_short_0,Short,NA,521975,4870024,341,7,2124,NA,NA,98,0.9,700,"Unburned edge too far to sight with rangefinder, upslope from plot; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+Wilcox_Berry_1_1_long_2,Long,NA,521571,4869803,344,12.6,2147,NA,NA,75,6,800,"Unburned edge too far to sight with rangefinder, upslope from plot. Count includes 1 surviving ABLA tree not killed by most recent fire (Tree_prefire); estimated from aerial imagery, dnbr6, and location of unburned edge identified in field"
+Waterfalls_Moran_1_1_short_0,Short,40,522803,4859209,110,6.4,2089,283,-3.1,283,-3.1,283,NA
+Waterfalls_Moran_1_1_long_3,Long,20,522249,4859044,96,6.4,2090,588,6.1,55,-3.1,588,NA
+Glade_Berry_1_1_short_0,Short,25,521825,4881184,256,6,2155,28,1.6,28,1.6,28,NA
+Glade_Berry_1_1_long_2,Long,40,521994,4880897,218,5.8,2157,NA,NA,NA,NA,350,"Unburned edge not visible; estimated from aerial imagery, dnbr6"
+Glade_Berry_4_4_short_0,Short,30,522058,4881375,340,5.1,2162,27,-5.1,27,-5.1,27,"PICO trees include unburned survivors (coded as Tree_prefire), PICO saplings include 2 unburned survivors (coded as Sapling_prefire)"
+Glade_Berry_4_4_long_2,Long,20,522354,4881036,324,2.2,2180,NA,NA,NA,NA,450,"Unburned edge not visible; estimated from aerial imagery, dnbr6"
+Huck_Berry_2_1_short_0,Short,40,525246,4877474,232,14.4,2303,NA,NA,NA,NA,450,"Unburned edge too far to sight with rangefinder; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+Huck_Berry_2_1_long_1,Long,30,525166,4877071,262,16,2297,NA,NA,NA,NA,250,"Unburned edge too far to sight with rangefinder; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+Huck_Berry_1_2_short_0,Short,20,524602,4877733,98,19.7,2281,147,-13.6,147,-13.7,147,NA
+Huck_Berry_1_2_long_2,Long,25,524368,4877299,90,22.2,2286,NA,NA,NA,NA,450,"Unburned edge too far to sight with rangefinder; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+Mystic_BearpawBay_2_3_short_0,Short,0,524542,4852129,37,6.9,2129,383,0.4,268,0,383,NA
+Mystic_BearpawBay_2_3_long_3,Long,15,524842,4851650,28,1.2,2121,NA,NA,180,2.5,500,"Unburned edge too far to sight with rangefinder; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+NFork_Maple_4_4_short_0,Short,30,503090,4946720,28,13.6,2134,23,14.1,23,14.1,23,Moved to get out of unburned forest. Count includes 4 surviving prefire trees from unburned edge.
+NFork_Maple_4_4_long_1,Long,20,502963,4946761,8,6.7,2145,40,-1.4,40,-1.4,40,NA
+NFork_Maple_6_6_short_0,Short,10,501902,4946775,348,6.3,2096,51,-1.5,51,-1.5,51,NA
+NFork_Maple_6_6_long_1,Long,20,502462,4946583,330,3.6,2125,132,1,10,2.9,132,"Seed source in plot, PICO tree tally includes unburned survivors"
+Pelican_LeHardy_1_5_short_0,Short,35,553422,4937938,200,7.8,2542,50,1.5,50,1.5,50,NA
+Pelican_LeHardy_1_5_long_1,Long,15,553221,4938005,224,16.8,2528,274,-18.9,85,-1.1,274,Seed source is downwind
+NFork_Cygnet_1_1_short_0,Short,20,531981,4949751,348,2.1,2516,125,2.8,125,2.8,125,NA
+NFork_Cygnet_1_1_long_3,Long,40,531645,4949696,344,6.2,2516,185,-0.5,185,-0.5,185,NA
+NFork_Cygnet_2_2_short_0,Short,40,531500,4949235,322,3.9,2513,40,2.1,40,2.1,40,NA
+NFork_Cygnet_2_2_long_2,Long,15,531469,4949357,300,8.1,2512,178,2.8,178,2.8,178,NA
+NFork_Owl_2_1_short_0,Short,35,499058,4986436,169,22.5,2359,71,-10.2,71,-10.2,71,NA
+NFork_Owl_2_1_long_1,Long,15,498918,4986428,162,24.9,2350,172,-8.3,164,-5.3,172,NA
+Clover_LeHardy_1_1_short_0,Short,20,555940,4946030,320,2.8,2546,30,-1.3,30,-1.3,30,NA
+Clover_LeHardy_1_1_long_2,Long,10,555937,4945851,308,5.3,2561,235,-4.1,125,3,235,NA
+Clover_Dewdrop_2_3_short_0,Short,25,555990,4949423,9,9.1,2769,39,-2.4,39,-2.4,39,NA
+Clover_Dewdrop_2_3_long_1,Long,5,555486,4949055,356,7.2,2764,356,-8.6,356,-8.6,356,NA
+Astringent_Tern_1_2_short_0,Short,0,560207,4941049,59,10.7,2510,NA,NA,73,-9.8,150,"Unburned edge not visible, estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+Astringent_Tern_1_2_long_2,Long,20,560494,4941132,68,13.3,2495,131,-7.6,131,-7.6,131,NA
+Clover_East_1_1_short_0,Short,5,558434,4932557,26,10.6,2423,57,0.8,57,0.8,57,NA
+Clover_East_1_1_long_1,Long,10,558158,4932257,25,11.8,2431,81,-5.2,58.6,12,81,Missing 1 litter and duff measurement
+Rathbone_BaconRind_1_5_short_0,Short,15,495212,4976747,60,18.4,2227,35,16.2,8,12.1,35,NA
+Rathbone_BaconRind_1_5_long_1,Long,25,494239,4977441,50,18.4,2239,72,-14.7,232,-9.2,72,NA
+Hellroaring_Buffalo_3_2_short_0,Short,40,552347,4979660,151,8.2,2444,50,-6.8,50,-6.8,50,NA
+Hellroaring_Buffalo_3_2_long_1,Long,5,552081,4978932,143,8,2431,117,13.1,109,-5.9,117,NA
+IronMtn_Derby_1_1_short_0,Short,25,583972,5046657,336,20.9,1830,441,23.1,441,23.1,441,NA
+IronMtn_Derby_1_1_long_1,Long,30,584001,5046803,336,14.5,1798,NA,NA,492,8.6,550,"Unburned edge too far to sight with rangefinder, upslope from plot; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"
+IronMtn_Derby_1_5_short_0,Short,35,583751,5046642,30,13.7,1848,391,21.7,391,21.7,391,NA
+IronMtn_Derby_1_5_long_2,Long,15,583650,5046750,18,14.2,1837,NA,NA,NA,NA,550,"Unburned edge too far to sight with rangefinder, upslope from plot; estimated from aerial imagery, dnbr6, and location of unburned edge identified while sampling plot in the field"

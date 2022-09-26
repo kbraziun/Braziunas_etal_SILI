@@ -1,0 +1,332 @@
+---
+title: "Climate Data Prep"
+author: "Kristin Braziunas"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+## Purpose
+
+Download climate data and prepare predictor climate variables relevant for tree regeneration.
+
+Climate data (4 km resolution, monthly) was downloaded from Terraclimate [https://www.climatologylab.org/terraclimate.html](https://www.climatologylab.org/terraclimate.html) for plot center coordinates for 2021 field data and Schoennagel et al. 2003 field data. Downloaded variables included: maximum and minimum temperature, precipitation, climate water deficit, soil moisture, and vapor pressure deficit.
+
+```{r load-libs, results="hide", message=FALSE, warning=FALSE}
+# load libraries
+library(tidyverse)
+library(openxlsx)
+library(ggpubr)
+```
+
+## 1. Read in and prep climate data
+
+Coarse resolution data was used because plot pairs were designed to represent similar conditions, and this ensured that most plot pairs occurred within the same grid cell and were therefore assigned the same average climate conditions for the purpose of analysis. Of the 33 plot pairs, 27 occurred within the same grid cell so had identical climate conditions (including all plots sampled in 2021) and 6 had differing climate conditions. Of the 6 pairs that differed, almost all (5 of the 6 pairs) differed by < 5% in the average value of each of these climate variables. 1 plot pair differed by up to 15% for some variables.
+
+```{r prep-data, results="hide",message=FALSE,warning=FALSE}
+
+#####
+# 1. read in and prep terraclim data
+#####
+
+### read in plot coordinates
+
+fire.final <- read.csv("processed_data/plot_selection/final_plot_coords_epsg4326.csv")
+
+### read in files
+
+terra.clim <- data.frame()
+
+# loop through all plots, all variables
+for(i in list.files("data/terraclim/", pattern="csv")) {
+  print(i)
+  file.name<-i
+  # variable name
+  f1 <- strsplit(file.name, split=".csv")
+  var <- strsplit(f1[[1]], split="_")[[1]][2]
+
+  # dataframe of daily values
+  day.in <- read.csv(paste0("data/terraclim/",file.name), header=FALSE,skip=1)
+  clim.in <- cbind(day.in,var)
+  names(clim.in) <- c("time","lat","lon","value","var")
+  
+  # bind to main output
+  terra.clim <- rbind(terra.clim,clim.in)
+  
+}
+
+summary(terra.clim)
+
+### determine scale factor, reference parent dataset
+# http://thredds.northwestknowledge.net:8080/thredds/dodsC/agg_terraclimate_def_1958_CurrentYear_GLOBE.nc.html, def = 0.1 (mm)
+# http://thredds.northwestknowledge.net:8080/thredds/dodsC/agg_terraclimate_ppt_1958_CurrentYear_GLOBE.nc.html, ppt = 0.1 (mm)
+# http://thredds.northwestknowledge.net:8080/thredds/dodsC/agg_terraclimate_vpd_1958_CurrentYear_GLOBE.nc.html, vpd = 0.01 (kPa)
+# http://thredds.northwestknowledge.net:8080/thredds/dodsC/agg_terraclimate_tmax_1958_CurrentYear_GLOBE.nc.html, tmax and tmin = 0.01 (degC)
+# http://thredds.northwestknowledge.net:8080/thredds/dodsC/agg_terraclimate_soil_1958_CurrentYear_GLOBE.nc.html, soil = 0.1 (mm)
+
+### match up with plots
+terra.short <- terra.clim %>%
+  full_join(fire.final, by=c("lat" = "Y","lon" = "X")) %>%
+  pivot_wider(names_from=var, values_from=value) %>%
+  mutate(time = as.Date(time)) %>%
+  mutate(year= as.numeric(format(time,'%Y')),
+         month = as.numeric(format(time,'%m'))) %>%
+  # apply scale factors
+  mutate(ppt = 0.1*ppt, tmax = 0.01*tmax, tmin = 0.01*tmin,
+         vpd = 0.01*vpd, def = 0.1*def, soil = 0.1*soil) %>%
+  rename(prec = ppt, max_temp=tmax, min_temp=tmin)
+
+head(terra.short)
+summary(terra.short)
+
+### how often do plot pairs have matching climate? (i.e., co-occur in same 4 km grid cell)
+terra.match <- terra.clim %>%
+  full_join(fire.final, by=c("lat" = "Y","lon" = "X")) %>%
+  # mean values for each variable
+  group_by(Plot_code,Fire_interval,var) %>%
+  summarise(value=mean(value)) %>%
+  # set up comparison of long and short pairs
+  # split based on naming convention of 2021 plots
+  separate(Plot_code, into=c("fire1","fire2","site","plot","fire_int_temp","id"), sep="_", fill="right") %>%
+  # identify correct matches for schoennagel plots
+  mutate(fire2 = ifelse(is.na(id),"fire2",fire2),
+         site = ifelse(is.na(id),1,site),
+         plot = ifelse(is.na(id),1,plot)) %>%
+  dplyr::select(-c(fire_int_temp,id)) %>%
+  pivot_wider(names_from=Fire_interval,values_from=value) %>%
+  # calculate absolute and relative difference
+  mutate(mean=(Short+Long)/2,
+         diff=Short-Long,
+         rel_diff = abs(diff/mean)*100)
+
+# pairs with identical climates = 27 (54 plots)
+terra.match %>%
+  filter(diff==0) %>%
+  tally()/6
+
+# pairs with differing climates = 6 (12 plots)
+terra.match %>%
+  filter(diff!=0) %>%
+  tally()/6
+
+# take a closer look
+terra.diff <- terra.match %>%
+  filter(diff!=0) 
+# all differing plots are from 2000 plots, none from 2021 field plots
+# for all plots except 1, average climate differs by < 5%. 
+# for 1 plot pair, average climate differs by up to ~15%
+
+```
+
+## 2-3. Calculate climate predictors
+
+I then calculated the following climate drivers hypothesized to affect tree regeneration based on previous studies:
+
+- Water-year (October-September) climate water deficit (normal 1989-2018, 1 yr post-fire, 2 yrs post-fire, 3 yrs post-fire; Stevens-Rumann et al. 2018)
+- Growing season (May-Sept) precipitation (normal 1989-2018, 3 yrs post-fire; Urza & Sibold 2017)
+- Mean growing season (May-Sept) temperature (normal 1989-2018, 3 yrs post-fire; Kemp et al. 2019, used summer but here extended to growing season)
+- Mean summer (June-Aug) vapor pressure deficit (normal 1989-2018, 3 yrs post-fire; Davis et al. 2019)
+- Maximum annual temperature (normal 1989-2018, 3 yrs post-fire; Davis et al. 2019)
+- Mean spring (March-May) soil moisture (normal 1989-2018, 3 yrs post-fire; Davis et al. 2019)
+- Minimum monthly soil moisture (normal 1989-2018, 3 yrs post-fire; Davis et al. 2019)
+
+I examined annual trends to identify whether and which variables captured warming-drying trends over time.
+
+```{r calc-clim-vars, results="hide",message=FALSE,warning=FALSE}
+#####
+# 2. calculate climate variables of interest
+#####
+
+# add water-year indicator, Oct-Sept
+terra.short$water_year <- ifelse(terra.short$month %in% c(1:9),
+                              terra.short$year,
+                              terra.short$year+1)
+
+### climate water deficit, from Harvey et al. 2016, Stevens-Rumann et al. 2018
+# annual climate water deficit for complete years
+terra.def_yr <- terra.short %>%
+  # 1988 and 2022 are incomplete records for water year
+  filter(!water_year %in% c(1988,2022)) %>%
+  # annual CWD
+  group_by(Plot_code,water_year) %>%
+  summarise(ann_def_mm = sum(def)) %>%
+  rename(year=water_year)
+
+# 30-year normals, using 1989-2018
+terra.def_norm <- terra.def_yr %>%
+  filter(year %in% c(1989:2018)) %>%
+  group_by(Plot_code) %>%
+  # mean and standard deviation
+  summarise(ann_def_mm_norm=mean(ann_def_mm),
+            ann_def_norm_sd=sd(ann_def_mm))
+
+### other variables from davis et al. 2019, urza & sibold 2017, kemp et al. 2019
+
+# growing season precip and temp
+terra.grow <- terra.short %>%
+  # average temperature
+  mutate(tavg=(max_temp+min_temp)/2) %>%
+  # growing season may-sept
+  filter(month %in% c(5:9)) %>%
+  dplyr::select(Plot_code,year,month,tavg,prec) %>%
+  group_by(Plot_code,year) %>%
+  summarise(grow_avg_temp_C = mean(tavg), grow_prec_mm = sum(prec))
+
+# suite of variables from davis et al. 2019
+# mean summer vpd
+terra.summer <- terra.short %>%
+  # summer: june-august
+  filter(month %in% c(6:8)) %>%
+  dplyr::select(Plot_code,year,month,vpd) %>%
+  group_by(Plot_code,year) %>%
+  summarise(summer_vpd_kpa = mean(vpd)) 
+
+# mean spring soil moisture
+terra.spring <- terra.short %>%
+  # spring: march-may
+  filter(month %in% c(3:5)) %>%  
+  dplyr::select(Plot_code,year,month,soil) %>%
+  group_by(Plot_code,year) %>%
+  summarise(spring_soilmoist_mm = mean(soil))
+
+# annual: max temp, soil moisture driest month
+terra.max <- terra.short %>%
+  dplyr::select(Plot_code,year,month,max_temp,soil) %>%
+  group_by(Plot_code,year) %>%
+  summarise(max_temp_C = max(max_temp), min_soilmoist_mm = min(soil))
+
+# put all these other variables together
+terra.ann <- terra.def_yr %>%
+  left_join(terra.summer, by=c("Plot_code","year")) %>%
+  left_join(terra.spring, by=c("Plot_code","year")) %>%
+  left_join(terra.max, by=c("Plot_code","year")) %>%
+  left_join(terra.grow, by=c("Plot_code","year")) 
+
+# 30-year normals for each of these
+terra.norms <-  terra.ann %>%
+  filter(year %in% c(1989:2018)) %>%
+  dplyr::select(-c(year,ann_def_mm)) %>%
+  group_by(Plot_code) %>%
+  # mean and sd
+  summarise_all(list(norm=mean, norm_sd=sd))
+
+### quick look at trends
+# annual trends
+terra.ann %>%
+  pivot_longer(cols=c(ann_def_mm:grow_prec_mm)) %>%
+  ggplot(aes(x=year,y=value)) +
+  facet_wrap(~name, scales="free_y") +
+  geom_point() +
+  geom_smooth(method="lm") +
+  stat_cor(method="spearman",cor.coef.name = "rho", p.digits=NA, label.sep="") +
+  theme_bw() # trend toward warmer, drier over time
+  
+#####
+# 3. aggregate to 1, 2, and 3 years postfire
+#####
+
+### read in fire year
+# schoennagel data
+scho.in <- read.csv("data/field_plots_2021/cleaned_data/Schoennagel_etal2003_cleaned.csv", header=TRUE) %>%
+  # add or rename columns to align with new data
+  mutate(Plot_code = paste0(SiteName,"_",SiteID)) %>%
+  dplyr::select(c(Plot_code,Fire_year_2))
+
+# new field plots
+fire.plots <- read.xlsx("data/field_plots_2021/raw_data/SILI_field_data_2021.xlsx", 
+                        sheet="Plot_info",
+                        colNames=TRUE) %>%
+  # select only needed columns
+  dplyr::select(Plot_code,Fire_year_2) %>%
+  rbind(scho.in) 
+
+### loop through all fires, match up correct postfire years, calculate climate variables
+terra.prep <- fire.plots %>%
+  left_join(terra.ann, by=c("Plot_code"))
+
+# output df
+terra.out <- data.frame()
+
+# loop through plots
+for(j in 1:dim(fire.plots)[1]) {
+
+  plot.n <- fire.plots[j,]$Plot_code
+  fire.yr <- fire.plots[j,]$Fire_year_2
+
+  # average of selected variables 
+  # 1 yr postfire, cwd only
+  mean.clim1 <- terra.prep %>%
+    filter(Plot_code == plot.n,
+           year %in% c(fire.yr+1)) %>%
+    group_by(Plot_code,Fire_year_2) %>%
+    summarise(ann_def_mm_pf1 = mean(ann_def_mm))
+  
+  # 2 yrs postfire, cwd only
+  mean.clim2 <- terra.prep %>%
+    filter(Plot_code == plot.n,
+           year %in% c(fire.yr+1,fire.yr+2)) %>%
+    group_by(Plot_code,Fire_year_2) %>%
+    summarise(ann_def_mm_pf2 = mean(ann_def_mm))
+  
+  # 3 yrs postfire, all variables
+  mean.clim3 <- terra.prep %>%
+    filter(Plot_code == plot.n,
+           year %in% c(fire.yr+1,fire.yr+2,fire.yr+3)) %>%
+    dplyr::select(-year) %>%
+    group_by(Plot_code,Fire_year_2) %>%
+    summarise_all(list(pf3=mean))
+  
+  mean.clim <- mean.clim1 %>%
+    left_join(mean.clim2, by=c("Plot_code","Fire_year_2")) %>%
+    left_join(mean.clim3, by=c("Plot_code","Fire_year_2"))
+
+  terra.out <- rbind(terra.out,data.frame(mean.clim))
+
+}
+
+### master output for all climate variables
+terra.outnorms <- terra.out %>%
+  left_join(terra.def_norm, by="Plot_code") %>%
+  left_join(terra.norms, by="Plot_code")
+
+# quick look at trends
+terra.outnorms %>%
+  pivot_longer(cols=c(ann_def_mm_pf1:grow_prec_mm_pf3)) %>%
+  ggplot(aes(x=Fire_year_2,y=value)) +
+  facet_wrap(~name, scales="free_y") +
+  geom_point() +
+  geom_smooth(method="lm") +
+  stat_cor(method="spearman",cor.coef.name = "rho", p.digits=NA, label.sep="") +
+  theme_bw() # post-fire deficit does not capture general warming-drying trend, but other variables do
+
+### calculate postfire anomaly for focal synthetic vars: cwd and summer vpd
+terra.def_anom <- terra.outnorms %>%
+  mutate(anom_def_mm = ann_def_mm_pf3-ann_def_mm_norm,
+         anom_def_zscore = anom_def_mm/ann_def_norm_sd,
+         anom_summer_vpd_kpa = summer_vpd_kpa_pf3-summer_vpd_kpa_norm,
+         anom_summer_vpd_zscore = anom_summer_vpd_kpa/summer_vpd_kpa_norm_sd) %>%
+  # only needed columns
+  dplyr::select(c(Plot_code,Fire_year_2,ann_def_mm_norm,summer_vpd_kpa_norm,anom_def_mm:anom_summer_vpd_zscore))
+
+# quick look at trends
+terra.def_anom %>%
+  pivot_longer(cols=c(anom_def_zscore,anom_summer_vpd_zscore)) %>%
+  ggplot(aes(x=Fire_year_2,y=value)) +
+  facet_wrap(~name, scales="free_y") +
+  geom_point() +
+  geom_smooth(method="lm") +
+  stat_cor(method="spearman",cor.coef.name = "rho", p.digits=NA, label.sep="") +
+  theme_bw() # post-fire deficit does not capture general warming-drying trend, but summer vpd does
+
+### write out - commented out for Rmd
+# terra.outnorms %>%
+#   # remove sds from master output
+#   dplyr::select(-c(summer_vpd_kpa_norm_sd:grow_prec_mm_norm_sd,ann_def_norm_sd)) %>%
+#   write.csv("processed_data/climate/terraclim.csv",row.names=FALSE)
+# 
+# write.csv(terra.def_anom, "processed_data/climate/terraclim_def_vpd_anom.csv",row.names=FALSE)
+
+```

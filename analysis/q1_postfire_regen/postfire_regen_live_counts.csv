@@ -1,0 +1,463 @@
+"Plot_pair","Plot_code","Fire_interval","Sample_year","Species","stems_ha","pres"
+"Arrow","Arrow_6301","Long",2000,"ABLA",25,1
+"Arrow","Arrow_6301","Long",2000,"PIAL",0,0
+"Arrow","Arrow_6301","Long",2000,"PICO",250,1
+"Arrow","Arrow_6301","Long",2000,"PIEN",0,0
+"Arrow","Arrow_6301","Long",2000,"POTR",0,0
+"Arrow","Arrow_6301","Long",2000,"PSME",0,0
+"Arrow","Arrow_6301","Long",2000,"Total",275,1
+"Arrow","Arrow_6300","Short",2000,"ABLA",0,0
+"Arrow","Arrow_6300","Short",2000,"PIAL",0,0
+"Arrow","Arrow_6300","Short",2000,"PICO",200,1
+"Arrow","Arrow_6300","Short",2000,"PIEN",0,0
+"Arrow","Arrow_6300","Short",2000,"POTR",0,0
+"Arrow","Arrow_6300","Short",2000,"PSME",0,0
+"Arrow","Arrow_6300","Short",2000,"Total",200,1
+"Astringent","Astringent_8191","Long",2000,"ABLA",0,0
+"Astringent","Astringent_8191","Long",2000,"PIAL",0,0
+"Astringent","Astringent_8191","Long",2000,"PICO",100,1
+"Astringent","Astringent_8191","Long",2000,"PIEN",0,0
+"Astringent","Astringent_8191","Long",2000,"POTR",0,0
+"Astringent","Astringent_8191","Long",2000,"PSME",0,0
+"Astringent","Astringent_8191","Long",2000,"Total",100,1
+"Astringent","Astringent_8190","Short",2000,"ABLA",0,0
+"Astringent","Astringent_8190","Short",2000,"PIAL",0,0
+"Astringent","Astringent_8190","Short",2000,"PICO",25,1
+"Astringent","Astringent_8190","Short",2000,"PIEN",0,0
+"Astringent","Astringent_8190","Short",2000,"POTR",0,0
+"Astringent","Astringent_8190","Short",2000,"PSME",0,0
+"Astringent","Astringent_8190","Short",2000,"Total",25,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"ABLA",1666.66666666666,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"PIAL",633.333333333334,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"PICO",6066.66666666667,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"PIEN",533.333333333333,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"POTR",0,0
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"PSME",0,0
+"Astringent_Tern_1_2","Astringent_Tern_1_2_long_2","Long",2021,"Total",8900,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"ABLA",166.666666666666,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"PIAL",0,0
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"PICO",2933.33333333333,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"PIEN",66.6666666666667,1
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"POTR",0,0
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"PSME",0,0
+"Astringent_Tern_1_2","Astringent_Tern_1_2_short_0","Short",2021,"Total",3166.66666666666,1
+"Charcoal","Charcoal_7261","Long",2000,"ABLA",0,0
+"Charcoal","Charcoal_7261","Long",2000,"PIAL",0,0
+"Charcoal","Charcoal_7261","Long",2000,"PICO",2825,1
+"Charcoal","Charcoal_7261","Long",2000,"PIEN",0,0
+"Charcoal","Charcoal_7261","Long",2000,"POTR",0,0
+"Charcoal","Charcoal_7261","Long",2000,"PSME",0,0
+"Charcoal","Charcoal_7261","Long",2000,"Total",2825,1
+"Charcoal","Charcoal_7260","Short",2000,"ABLA",0,0
+"Charcoal","Charcoal_7260","Short",2000,"PIAL",0,0
+"Charcoal","Charcoal_7260","Short",2000,"PICO",475,1
+"Charcoal","Charcoal_7260","Short",2000,"PIEN",0,0
+"Charcoal","Charcoal_7260","Short",2000,"POTR",0,0
+"Charcoal","Charcoal_7260","Short",2000,"PSME",0,0
+"Charcoal","Charcoal_7260","Short",2000,"Total",475,1
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"ABLA",0,0
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"PIAL",0,0
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"PICO",4875,1
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"PIEN",0,0
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"POTR",0,0
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"PSME",0,0
+"Charcoal Bay","Charcoal Bay_998051","Long",2000,"Total",4875,1
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"ABLA",0,0
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"PIAL",0,0
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"PICO",75,1
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"PIEN",0,0
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"POTR",0,0
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"PSME",0,0
+"Charcoal Bay","Charcoal Bay_998050","Short",2000,"Total",75,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"ABLA",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"PIAL",233.333333333333,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"PICO",33.3333333333333,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"PIEN",33.3333333333333,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"POTR",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"PSME",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_long_1","Long",2021,"Total",300,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"ABLA",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"PIAL",166.666666666667,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"PICO",400,1
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"PIEN",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"POTR",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"PSME",0,0
+"Clover_Dewdrop_2_3","Clover_Dewdrop_2_3_short_0","Short",2021,"Total",566.666666666667,1
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"ABLA",433.333333333333,1
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"PIAL",133.333333333333,1
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"PICO",3266.66666666667,1
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"PIEN",1166.66666666667,1
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"POTR",0,0
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"PSME",0,0
+"Clover_East_1_1","Clover_East_1_1_long_1","Long",2021,"Total",5000.00000000001,1
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"ABLA",0,0
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"PIAL",0,0
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"PICO",1433.33333333333,1
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"PIEN",0,0
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"POTR",0,0
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"PSME",0,0
+"Clover_East_1_1","Clover_East_1_1_short_0","Short",2021,"Total",1433.33333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"ABLA",133.333333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"PIAL",1133.33333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"PICO",1733.33333333334,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"PIEN",233.333333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"POTR",0,0
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"PSME",0,0
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_long_2","Long",2021,"Total",3233.33333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"ABLA",33.3333333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"PIAL",433.333333333333,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"PICO",5466.66666666666,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"PIEN",66.6666666666667,1
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"POTR",0,0
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"PSME",0,0
+"Clover_LeHardy_1_1","Clover_LeHardy_1_1_short_0","Short",2021,"Total",5999.99999999999,1
+"Cygnet","Cygnet_8031","Long",2000,"ABLA",0,0
+"Cygnet","Cygnet_8031","Long",2000,"PIAL",75,1
+"Cygnet","Cygnet_8031","Long",2000,"PICO",13700,1
+"Cygnet","Cygnet_8031","Long",2000,"PIEN",25,1
+"Cygnet","Cygnet_8031","Long",2000,"POTR",0,0
+"Cygnet","Cygnet_8031","Long",2000,"PSME",0,0
+"Cygnet","Cygnet_8031","Long",2000,"Total",13800,1
+"Cygnet","Cygnet_8030","Short",2000,"ABLA",0,0
+"Cygnet","Cygnet_8030","Short",2000,"PIAL",0,0
+"Cygnet","Cygnet_8030","Short",2000,"PICO",650,1
+"Cygnet","Cygnet_8030","Short",2000,"PIEN",25,1
+"Cygnet","Cygnet_8030","Short",2000,"POTR",0,0
+"Cygnet","Cygnet_8030","Short",2000,"PSME",0,0
+"Cygnet","Cygnet_8030","Short",2000,"Total",675,1
+"Factory Hill","Factory Hill_7121","Long",2000,"ABLA",0,0
+"Factory Hill","Factory Hill_7121","Long",2000,"PIAL",0,0
+"Factory Hill","Factory Hill_7121","Long",2000,"PICO",425,1
+"Factory Hill","Factory Hill_7121","Long",2000,"PIEN",0,0
+"Factory Hill","Factory Hill_7121","Long",2000,"POTR",0,0
+"Factory Hill","Factory Hill_7121","Long",2000,"PSME",0,0
+"Factory Hill","Factory Hill_7121","Long",2000,"Total",425,1
+"Factory Hill","Factory Hill_7120","Short",2000,"ABLA",0,0
+"Factory Hill","Factory Hill_7120","Short",2000,"PIAL",0,0
+"Factory Hill","Factory Hill_7120","Short",2000,"PICO",225,1
+"Factory Hill","Factory Hill_7120","Short",2000,"PIEN",0,0
+"Factory Hill","Factory Hill_7120","Short",2000,"POTR",0,0
+"Factory Hill","Factory Hill_7120","Short",2000,"PSME",0,0
+"Factory Hill","Factory Hill_7120","Short",2000,"Total",225,1
+"Forest Lake","Forest Lake_7211","Long",2000,"ABLA",0,0
+"Forest Lake","Forest Lake_7211","Long",2000,"PIAL",0,0
+"Forest Lake","Forest Lake_7211","Long",2000,"PICO",12025,1
+"Forest Lake","Forest Lake_7211","Long",2000,"PIEN",0,0
+"Forest Lake","Forest Lake_7211","Long",2000,"POTR",0,0
+"Forest Lake","Forest Lake_7211","Long",2000,"PSME",0,0
+"Forest Lake","Forest Lake_7211","Long",2000,"Total",12025,1
+"Forest Lake","Forest Lake_7210","Short",2000,"ABLA",0,0
+"Forest Lake","Forest Lake_7210","Short",2000,"PIAL",0,0
+"Forest Lake","Forest Lake_7210","Short",2000,"PICO",2975,1
+"Forest Lake","Forest Lake_7210","Short",2000,"PIEN",0,0
+"Forest Lake","Forest Lake_7210","Short",2000,"POTR",0,0
+"Forest Lake","Forest Lake_7210","Short",2000,"PSME",0,0
+"Forest Lake","Forest Lake_7210","Short",2000,"Total",2975,1
+"Gallatin","Gallatin_7171","Long",2000,"ABLA",0,0
+"Gallatin","Gallatin_7171","Long",2000,"PIAL",0,0
+"Gallatin","Gallatin_7171","Long",2000,"PICO",675,1
+"Gallatin","Gallatin_7171","Long",2000,"PIEN",0,0
+"Gallatin","Gallatin_7171","Long",2000,"POTR",0,0
+"Gallatin","Gallatin_7171","Long",2000,"PSME",0,0
+"Gallatin","Gallatin_7171","Long",2000,"Total",675,1
+"Gallatin","Gallatin_7170","Short",2000,"ABLA",0,0
+"Gallatin","Gallatin_7170","Short",2000,"PIAL",0,0
+"Gallatin","Gallatin_7170","Short",2000,"PICO",150,1
+"Gallatin","Gallatin_7170","Short",2000,"PIEN",0,0
+"Gallatin","Gallatin_7170","Short",2000,"POTR",0,0
+"Gallatin","Gallatin_7170","Short",2000,"PSME",0,0
+"Gallatin","Gallatin_7170","Short",2000,"Total",150,1
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"ABLA",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"PIAL",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"PICO",2100,1
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"PIEN",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"POTR",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"PSME",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_long_2","Long",2021,"Total",2100,1
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"ABLA",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"PIAL",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"PICO",2866.66666666667,1
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"PIEN",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"POTR",4300,1
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"PSME",0,0
+"Glade_Berry_1_1","Glade_Berry_1_1_short_0","Short",2021,"Total",7166.66666666667,1
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"ABLA",0,0
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"PIAL",0,0
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"PICO",133933.333333333,1
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"PIEN",100,1
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"POTR",200,1
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"PSME",66.6666666666667,1
+"Glade_Berry_4_4","Glade_Berry_4_4_long_2","Long",2021,"Total",134300,1
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"ABLA",33.3333333333333,1
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"PIAL",0,0
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"PICO",1300,1
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"PIEN",33.3333333333333,1
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"POTR",1433.33333333333,1
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"PSME",0,0
+"Glade_Berry_4_4","Glade_Berry_4_4_short_0","Short",2021,"Total",2800,1
+"Heart Lake N","Heart Lake N_7111","Long",2000,"ABLA",0,0
+"Heart Lake N","Heart Lake N_7111","Long",2000,"PIAL",0,0
+"Heart Lake N","Heart Lake N_7111","Long",2000,"PICO",2250,1
+"Heart Lake N","Heart Lake N_7111","Long",2000,"PIEN",0,0
+"Heart Lake N","Heart Lake N_7111","Long",2000,"POTR",0,0
+"Heart Lake N","Heart Lake N_7111","Long",2000,"PSME",0,0
+"Heart Lake N","Heart Lake N_7111","Long",2000,"Total",2250,1
+"Heart Lake N","Heart Lake N_7110","Short",2000,"ABLA",0,0
+"Heart Lake N","Heart Lake N_7110","Short",2000,"PIAL",0,0
+"Heart Lake N","Heart Lake N_7110","Short",2000,"PICO",125,1
+"Heart Lake N","Heart Lake N_7110","Short",2000,"PIEN",0,0
+"Heart Lake N","Heart Lake N_7110","Short",2000,"POTR",0,0
+"Heart Lake N","Heart Lake N_7110","Short",2000,"PSME",0,0
+"Heart Lake N","Heart Lake N_7110","Short",2000,"Total",125,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"ABLA",100,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"PIAL",0,0
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"PICO",533.333333333333,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"PIEN",66.6666666666667,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"POTR",33.3333333333333,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"PSME",66.6666666666667,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_long_1","Long",2021,"Total",800,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"ABLA",33.3333333333333,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"PIAL",0,0
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"PICO",1200,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"PIEN",66.6666666666667,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"POTR",166.666666666667,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"PSME",33.3333333333333,1
+"Hellroaring_Buffalo_3_2","Hellroaring_Buffalo_3_2_short_0","Short",2021,"Total",1500,1
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"ABLA",33.3333333333333,1
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"PIAL",0,0
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"PICO",5266.66666666667,1
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"PIEN",33.3333333333333,1
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"POTR",0,0
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"PSME",0,0
+"Huck_Berry_1_2","Huck_Berry_1_2_long_2","Long",2021,"Total",5333.33333333334,1
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"ABLA",33.3333333333333,1
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"PIAL",0,0
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"PICO",2066.66666666667,1
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"PIEN",33.3333333333333,1
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"POTR",700,1
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"PSME",0,0
+"Huck_Berry_1_2","Huck_Berry_1_2_short_0","Short",2021,"Total",2833.33333333334,1
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"ABLA",266.666666666667,1
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"PIAL",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"PICO",197433.333333333,1
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"PIEN",533.333333333333,1
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"POTR",33.3333333333333,1
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"PSME",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_long_1","Long",2021,"Total",198266.666666667,1
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"ABLA",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"PIAL",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"PICO",1400,1
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"PIEN",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"POTR",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"PSME",0,0
+"Huck_Berry_2_1","Huck_Berry_2_1_short_0","Short",2021,"Total",1400,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"ABLA",0,0
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"PIAL",0,0
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"PICO",9533.33333333333,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"PIEN",666.666666666667,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"POTR",100,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"PSME",33.3333333333333,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_long_1","Long",2021,"Total",10333.3333333333,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"ABLA",0,0
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"PIAL",0,0
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"PICO",1066.66666666667,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"PIEN",33.3333333333333,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"POTR",166.666666666667,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"PSME",266.666666666667,1
+"IronMountain_Derby_1_1","IronMtn_Derby_1_1_short_0","Short",2021,"Total",1533.33333333333,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"ABLA",0,0
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"PIAL",0,0
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"PICO",14666.6666666667,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"PIEN",33.3333333333333,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"POTR",133.333333333333,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"PSME",233.333333333333,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_long_2","Long",2021,"Total",15066.6666666667,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"ABLA",0,0
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"PIAL",0,0
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"PICO",1200,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"PIEN",33.3333333333333,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"POTR",33.3333333333333,1
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"PSME",0,0
+"IronMountain_Derby_1_5","IronMtn_Derby_1_5_short_0","Short",2021,"Total",1266.66666666667,1
+"Madison Junct","Madison Junct_8111","Long",2000,"ABLA",0,0
+"Madison Junct","Madison Junct_8111","Long",2000,"PIAL",0,0
+"Madison Junct","Madison Junct_8111","Long",2000,"PICO",49200,1
+"Madison Junct","Madison Junct_8111","Long",2000,"PIEN",0,0
+"Madison Junct","Madison Junct_8111","Long",2000,"POTR",0,0
+"Madison Junct","Madison Junct_8111","Long",2000,"PSME",0,0
+"Madison Junct","Madison Junct_8111","Long",2000,"Total",49200,1
+"Madison Junct","Madison Junct_8110","Short",2000,"ABLA",0,0
+"Madison Junct","Madison Junct_8110","Short",2000,"PIAL",0,0
+"Madison Junct","Madison Junct_8110","Short",2000,"PICO",14825,1
+"Madison Junct","Madison Junct_8110","Short",2000,"PIEN",0,0
+"Madison Junct","Madison Junct_8110","Short",2000,"POTR",0,0
+"Madison Junct","Madison Junct_8110","Short",2000,"PSME",0,0
+"Madison Junct","Madison Junct_8110","Short",2000,"Total",14825,1
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"ABLA",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"PIAL",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"PICO",11466.6666666667,1
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"PIEN",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"POTR",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"PSME",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_long_1","Long",2021,"Total",11466.6666666667,1
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"ABLA",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"PIAL",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"PICO",3333.33333333333,1
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"PIEN",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"POTR",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"PSME",0,0
+"Mystic_BearpawBay_1_1","Mystic_BearpawBay_1_1_short_0","Short",2021,"Total",3333.33333333333,1
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"ABLA",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"PIAL",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"PICO",148000,1
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"PIEN",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"POTR",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"PSME",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_long_3","Long",2021,"Total",148000,1
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"ABLA",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"PIAL",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"PICO",2066.66666666666,1
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"PIEN",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"POTR",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"PSME",0,0
+"Mystic_BearpawBay_2_3","Mystic_BearpawBay_2_3_short_0","Short",2021,"Total",2066.66666666666,1
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"ABLA",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"PIAL",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"PICO",4733.33333333333,1
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"PIEN",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"POTR",266.666666666667,1
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"PSME",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_long_3","Long",2021,"Total",5000,1
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"ABLA",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"PIAL",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"PICO",3433.33333333333,1
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"PIEN",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"POTR",33.3333333333333,1
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"PSME",0,0
+"NorthFork_Cygnet_1_1","NFork_Cygnet_1_1_short_0","Short",2021,"Total",3466.66666666667,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"ABLA",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"PIAL",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"PICO",7933.33333333333,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"PIEN",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"POTR",66.6666666666667,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"PSME",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_long_2","Long",2021,"Total",8000,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"ABLA",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"PIAL",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"PICO",4966.66666666667,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"PIEN",100,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"POTR",266.666666666667,1
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"PSME",0,0
+"NorthFork_Cygnet_2_2","NFork_Cygnet_2_2_short_0","Short",2021,"Total",5333.33333333334,1
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"ABLA",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"PIAL",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"PICO",137133.333333333,1
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"PIEN",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"POTR",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"PSME",100,1
+"NorthFork_Maple_4_4","NFork_Maple_4_4_long_1","Long",2021,"Total",137233.333333333,1
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"ABLA",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"PIAL",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"PICO",12233.3333333333,1
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"PIEN",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"POTR",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"PSME",0,0
+"NorthFork_Maple_4_4","NFork_Maple_4_4_short_0","Short",2021,"Total",12233.3333333333,1
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"ABLA",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"PIAL",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"PICO",147200,1
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"PIEN",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"POTR",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"PSME",233.333333333333,1
+"NorthFork_Maple_6_6","NFork_Maple_6_6_long_1","Long",2021,"Total",147433.333333333,1
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"ABLA",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"PIAL",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"PICO",10466.6666666667,1
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"PIEN",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"POTR",166.666666666667,1
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"PSME",0,0
+"NorthFork_Maple_6_6","NFork_Maple_6_6_short_0","Short",2021,"Total",10633.3333333334,1
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"ABLA",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"PIAL",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"PICO",2533.33333333334,1
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"PIEN",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"POTR",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"PSME",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_long_1","Long",2021,"Total",2533.33333333334,1
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"ABLA",66.6666666666666,1
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"PIAL",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"PICO",1233.33333333333,1
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"PIEN",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"POTR",0,0
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"PSME",33.3333333333333,1
+"NorthFork_Owl_2_1","NFork_Owl_2_1_short_0","Short",2021,"Total",1333.33333333333,1
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"ABLA",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"PIAL",333.333333333333,1
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"PICO",2933.33333333334,1
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"PIEN",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"POTR",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"PSME",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_long_1","Long",2021,"Total",3266.66666666667,1
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"ABLA",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"PIAL",66.6666666666667,1
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"PICO",10700,1
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"PIEN",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"POTR",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"PSME",0,0
+"Pelican_LeHardy_1_5","Pelican_LeHardy_1_5_short_0","Short",2021,"Total",10766.6666666667,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"ABLA",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"PIAL",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"PICO",1600,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"PIEN",100,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"POTR",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"PSME",33.3333333333333,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_long_1","Long",2021,"Total",1733.33333333334,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"ABLA",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"PIAL",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"PICO",1700,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"PIEN",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"POTR",866.666666666667,1
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"PSME",0,0
+"Rathbone_BaconRind_1_5","Rathbone_BaconRind_1_5_short_0","Short",2021,"Total",2566.66666666667,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"ABLA",66.6666666666667,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"PIAL",0,0
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"PICO",533.333333333333,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"PIEN",233.333333333334,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"POTR",1200,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"PSME",0,0
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_long_3","Long",2021,"Total",2033.33333333333,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"ABLA",0,0
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"PIAL",0,0
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"PICO",500,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"PIEN",0,0
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"POTR",3000,1
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"PSME",0,0
+"Waterfalls_Moran_1_1","Waterfalls_Moran_1_1_short_0","Short",2021,"Total",3500,1
+"WestYell","WestYell_6291","Long",2000,"ABLA",0,0
+"WestYell","WestYell_6291","Long",2000,"PIAL",0,0
+"WestYell","WestYell_6291","Long",2000,"PICO",5000,1
+"WestYell","WestYell_6291","Long",2000,"PIEN",0,0
+"WestYell","WestYell_6291","Long",2000,"POTR",0,0
+"WestYell","WestYell_6291","Long",2000,"PSME",0,0
+"WestYell","WestYell_6291","Long",2000,"Total",5000,1
+"WestYell","WestYell_6290","Short",2000,"ABLA",0,0
+"WestYell","WestYell_6290","Short",2000,"PIAL",0,0
+"WestYell","WestYell_6290","Short",2000,"PICO",275,1
+"WestYell","WestYell_6290","Short",2000,"PIEN",0,0
+"WestYell","WestYell_6290","Short",2000,"POTR",0,0
+"WestYell","WestYell_6290","Short",2000,"PSME",0,0
+"WestYell","WestYell_6290","Short",2000,"Total",275,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"ABLA",466.666666666667,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"PIAL",0,0
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"PICO",266.666666666667,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"PIEN",5666.66666666667,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"POTR",0,0
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"PSME",266.666666666666,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_long_2","Long",2021,"Total",6666.66666666667,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"ABLA",66.6666666666667,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"PIAL",0,0
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"PICO",100,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"PIEN",300,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"POTR",1533.33333333333,1
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"PSME",0,0
+"Wilcox_Berry_1_1","Wilcox_Berry_1_1_short_0","Short",2021,"Total",2000,1

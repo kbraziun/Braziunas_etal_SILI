@@ -1,0 +1,512 @@
+---
+title: "SI/LI Fire Selection"
+author: "Kristin Braziunas"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+## Purpose
+
+The purpose of this script is to identify overlapping fire perimeters using data from MTBS (fires 1983 or later) and Yellowstone and Grand Teton National Parks. Excluded prescribed fires and fires with an interval of less than 5 years (unlikely to be a "forest" reburn because insufficient time to recover after first fire). Selected fires with a reburn interval of < 30 years (short-interval fire, SI). Final fires were selected in which the second fire occurred after 1988, because Tania Schoennagel's dataset provides ample observations of SI fires where the second fire was in 1988.
+
+
+```{r load-libs, results="hide", message=FALSE, warning=FALSE}
+# load libraries
+library(rgdal)
+library(sp)
+library(raster)
+library(rgeos)
+library(sf)
+library(dplyr)
+library(openxlsx)
+```
+
+## 1-4. Initial SI fire selection
+
+Sections 1-4 of this script resulted in an initial set of potential SI fires. These fires were subsequently screened by hand and with ancillary burn severity data from MTBS to identify high-priority areas based on repeat high-severity fire, forest recovery in between fires, sufficient patch size of moderate to high-severity fire, and ease of access.
+
+```{r si-fire-selection, results="hide", message=FALSE, warning=FALSE }
+
+#####
+# 1. Read in fire perimeter shapefiles
+#####
+
+### mtbs for conus
+mtbs.in <- st_read("data/MTBS/mtbs_perimeter_data/mtbs_perims_DD.shp")
+
+# add year based on ignition date
+mtbs.in$Year <- as.numeric(format(mtbs.in$Ig_Date,'%Y'))
+
+### gye outline
+gye.in <- st_read("data/nr_gye/GYE_outline.shp")
+
+### historical data from yellowstone, only 1958 or later
+# The input file geodatabase
+ygdb <- "data/YELL/yell_fire_history.gdb"
+
+# List all feature classes in a file geodatabase
+subset(ogrDrivers(), grepl("GDB", name))
+fc_list <- ogrListLayers(ygdb)
+print(fc_list)
+
+# Read the feature class
+yell.in <- st_read(dsn=ygdb,layer="yell_fire_perimeters") %>%
+  filter(YEAR >= 1958 & YEAR <= 1983) # exclude anything with > 30 yr FRI and anything not in MTBS database
+
+### historical data from grand teton, only 1958 or later
+# The input file geodatabase
+ggdb <- "data/GRTE/GRTE_FireHistory.gdb"
+
+# List all feature classes in a file geodatabase
+subset(ogrDrivers(), grepl("GDB", name))
+fc_list <- ogrListLayers(ggdb)
+print(fc_list)
+
+# Read the feature class
+grte.in <- st_read(dsn=ggdb,layer="WF_Perimeters_flat_ply") %>%
+  filter(FireCalendarYear >= 1958 & FireCalendarYear <= 1983) # exclude anything with > 30 yr FRI and anything not in MTBS database
+
+
+#####
+# 2. subset to GYE, combine shapefiles, identify intersecting fires
+#####
+
+### first crop mtbs
+st_crs(gye.in) == st_crs(mtbs.in) # false
+
+# transform gye to mtbs CRS
+gye.trans <- st_transform(gye.in, crs = st_crs(mtbs.in))
+st_crs(gye.trans) == st_crs(mtbs.in)
+
+# crop mtbs
+mtbs.crop <- st_crop(mtbs.in,gye.trans) %>% # gives rectangle
+  st_intersection(gye.trans)
+  
+# check
+plot(st_geometry(mtbs.crop)) # looks good
+
+# transform mtbs to utm coordinates
+mtbs.gye <- st_transform(mtbs.crop, crs = st_crs(gye.in))
+
+### combine, mtbs, yell, and grte fires
+str(mtbs.gye)
+st_crs(mtbs.gye)
+
+# prep mtbs
+mtbs.sm <- mtbs.gye %>%
+  mutate(BurnBndHa = BurnBndAc/2.471, Event_ID = as.character(Event_ID), Incid_Name=as.character(Incid_Name),
+         Incid_Type = as.character(Incid_Type), Map_Prog=as.character(Map_Prog), Ig_Date = as.character(Ig_Date)) %>%
+  dplyr::select(Event_ID,Incid_Name,Incid_Type,Map_Prog,BurnBndHa,Ig_Date,Year,geometry)
+
+# prep yell.in
+st_crs(yell.in) # good
+
+yell.sm <- yell.in %>%
+  mutate(BurnBndHa = ACRES_CALC/2.471, Event_ID = as.character(Y_FIRE_ID), Incid_Name = as.character(Y_FIRE_NAM),
+         Map_Prog = as.character(AREA_NAME)) %>%
+  rename(Incid_Type = SPEC_CAUSE, Ig_Date = DISC_DATE, Year=YEAR, geometry=Shape) %>%
+  dplyr::select(Event_ID,Incid_Name,Incid_Type,Map_Prog,BurnBndHa,Ig_Date,Year,geometry)
+
+# prep grte.in
+st_crs(grte.in) # needs transformation
+
+grte.sm <- grte.in %>%
+  st_transform(crs = st_crs(mtbs.gye)) %>%
+  mutate(BurnBndHa = GISAcres/2.471,
+         Ig_Date = FireCalendarYear, Event_ID = as.character(UniqueFireID), Incid_Name = as.character(IncidentName),
+         Incid_Type = as.character(FeatureCategory), Map_Prog = as.character(ReportingUnitID)) %>%
+  rename(Year = FireCalendarYear, geometry=Shape) %>%
+  dplyr::select(Event_ID,Incid_Name,Incid_Type,Map_Prog,BurnBndHa,Ig_Date,Year,geometry)
+
+# combine
+mtbs.sf <- rbind(mtbs.sm,yell.sm,grte.sm)
+
+### identify intersecting fires using sf
+mtbs.int <- mtbs.sf %>% 
+  st_set_precision(1e5) %>%
+  st_intersection() %>%
+  filter(n.overlaps > 1) # filter only overlapping
+  
+# add area of overlap
+mtbs.int$area <- st_area(mtbs.int) %>% units::set_units(ha)
+
+#####
+# 3. criteria for selecting fires
+#####
+
+# address potential edge issues
+mtbs.sel <- st_buffer(st_buffer(mtbs.int, -0.001),0.001)
+
+# areas with 3 overlap (triple burn)
+mtbs.sel %>%
+  filter(n.overlaps == 3)
+
+# get first and second fire
+# no prescribed fire
+# FRI >= 5 years, insufficient time for forest recovery
+# FRI <= 30 years, definition of short-interval
+fire.select <- st_intersection(mtbs.sf, mtbs.sel) %>%
+  st_collection_extract() %>% # fix issues with polygons
+  filter(Incid_Type != "Prescribed Fire",
+         Incid_Type.1 != "Prescribed Fire") %>%  # remove prescribed fire 
+  mutate(FRI = abs(Year - Year.1)) %>%
+  filter(FRI >= 5 & FRI <=30) %>% # FRI >= 10 years
+  filter(Year >= 1984 | Year.1 >= 1984) %>%  # at least 1 year in mtbs record
+  dplyr::select(-origins)
+
+  
+# generate subset with post-88 second fires only, because 1988 fires covered by Schoennagel et al. 2003
+fire.select2 <- st_intersection(mtbs.sf, mtbs.sel) %>%
+  st_collection_extract() %>% # fix issues with polygons
+  filter(Incid_Type != "Prescribed Fire",
+         Incid_Type.1 != "Prescribed Fire") %>%  # remove prescribed fire 
+  mutate(FRI = abs(Year - Year.1)) %>%
+  filter(FRI >= 5 & FRI <= 30) %>% # FRI >= 10 years
+  filter(Year > 1988 | Year.1 > 1988) %>%  # at least 1 year in mtbs record
+  dplyr::select(-origins)
+
+#####
+# 4. identify first and second fires
+#####
+
+# If Year is first fire, set to 0, else 1
+fire.select$fire_order <- ifelse(fire.select$Year < fire.select$Year.1, 0, 1) 
+fire.select2$fire_order <- ifelse(fire.select2$Year < fire.select2$Year.1, 0, 1) 
+
+fire1 <- ifelse(fire.select$fire_order == 0, 
+               as.character(fire.select$Event_ID), 
+               as.character(fire.select$Event_ID.1))
+fire2 <- ifelse(fire.select$fire_order == 1, 
+               as.character(fire.select$Event_ID), 
+               as.character(fire.select$Event_ID.1))
+
+# now subset mtbs records
+# subsetting original shapefile
+mtbs.fire1 <- mtbs.sf %>%
+  filter(Event_ID %in% c(fire1))
+
+mtbs.fire2 <- mtbs.sf %>%
+  filter(Event_ID %in% c(fire2))
+
+### write out - commented out for Rmd
+# st_write(fire.select, "processed_data/fire_selection/fire_intersection.shp", delete_dsn=TRUE)
+# 
+# st_write(fire.select2, "processed_data/fire_selection/fire_intersection_post88.shp", delete_dsn=TRUE)
+# 
+# st_write(mtbs.fire1, "processed_data/fire_selection/fire1.shp", delete_dsn=TRUE)
+# st_write(mtbs.fire2, "processed_data/fire_selection/fire2.shp", delete_dsn=TRUE)
+
+# plot reburns
+plot(fire.select2[1], col="red")
+
+# version for note-taking
+fire.df1 <- as.data.frame(fire.select2) %>%
+  filter(fire_order==0) %>%
+  dplyr::select(c(Event_ID,Incid_Name,Year,Event_ID.1,Incid_Name.1,Year.1,n.overlaps,area,FRI)) %>%
+  rename(Event_ID_1 = Event_ID, Incid_Name_1 = Incid_Name, Year_1 = Year,
+         Event_ID_2 = Event_ID.1, Incid_Name_2 = Incid_Name.1, Year_2 = Year.1)
+
+fire.df2 <- as.data.frame(fire.select2) %>%
+  filter(fire_order==1) %>%
+  dplyr::select(c(Event_ID.1,Incid_Name.1,Year.1,Event_ID,Incid_Name,Year,n.overlaps,area,FRI)) %>%
+  rename(Event_ID_1 = Event_ID.1, Incid_Name_1 = Incid_Name.1, Year_1 = Year.1,
+         Event_ID_2 = Event_ID, Incid_Name_2 = Incid_Name, Year_2 = Year)
+
+### write out - commented out for Rmd
+# fire.dfout <- rbind(fire.df1, fire.df2) %>%
+#   write.csv("processed_data/fire_selection/fire_intersection_df.csv", row.names=FALSE)
+
+```
+
+## 5. Create master burn severity raster
+
+Section 5 uses a screened subset of fires (`processed_data/fire_intersection_df_notes.csv`) to create a master burn severity raster. Classification cut-offs for unburned, low, moderate, or high (stand-replacing) severity are from Harvey et al. 2016 Ecology (see citation in paper). The final raster includes areas classified as long-interval (4; unburned during first fire, burned as stand-replacing in second), short-interval (8; burned twice as stand-replacing), and moderate to high short-interval (7; burned once as moderate severity and second time and high severity). The moderate to high short-interval areas are used to identify patches where burn severity was at least moderate, for the purpose of selecting plots that were not too close to the edge of a burned patch. This burn severity raster was used to further screen and prioritize fires for sampling in the 2021 field season, as well as for selecting field plot locations.
+
+```{r burn-sev-raster, eval=FALSE}
+#####
+# 5. Create master raster of stand x stand, long interval
+#####
+
+### load initially screened fires based on area of overlap, SI high-severity fire
+fire.screened <- read.csv("processed_data/fire_selection/fire_intersection_df_notes.csv") # full set
+
+# read in shapefiles if needed
+fire.select <- st_read("processed_data/fire_selection/fire_intersection.shp")
+mtbs.fire1 <- st_read("processed_data/fire_selection/fire1.shp")
+mtbs.fire2 <- st_read("processed_data/fire_selection/fire2.shp")
+
+### read in all the rasters for these fires
+rnames <- tolower(unique(c(as.character(fire.screened$Event_ID_1),as.character(fire.screened$Event_ID_2)))) 
+rnames <- rnames[!rnames %in% c("198117","198152","1974-wygtp-4009","1978-wygtp-8005","1981-wygtp-1903")]
+
+# first get max extent
+xmin=-1100000
+xmax=-1100000
+ymin=2500000
+ymax=2500000
+
+for (i in rnames) {
+  print(i)
+  
+  # read in raster extent
+  ext.in <- extent(raster(list.files(paste0("data/MTBS/MTBS_rdnbr/",i), pattern="rdnbr.tif",full.names=TRUE)))
+  
+  # get maximum extent
+  xmin.new <- (ext.in[1])
+  xmax.new <- (ext.in[2])
+  ymin.new <- (ext.in[3])
+  ymax.new <- (ext.in[4])
+  
+  xmin <- min(xmin,xmin.new)
+  xmax <- max(xmax,xmax.new)
+  ymin <- min(ymin,ymin.new)
+  ymax <- max(ymax,ymax.new)
+  
+}
+
+# assign maximum extent
+ext.out <- extent(xmin,xmax,ymin,ymax)
+
+### helper functions
+# function to load, mask classified dnbr
+load_dnbr <- function(r) {
+  
+  # read in burn boundary
+  fire.shp <- st_read(list.files(paste0("data/MTBS/MTBS_rdnbr/",r), pattern="burn_bndy.shp",full.names=TRUE))
+  
+  # read in classified dnbr
+  dnbr <- raster(list.files(paste0("data/MTBS/MTBS_rdnbr/",r), pattern="dnbr6.tif",full.names=TRUE))
+  
+  # mask
+  sev <- mask(dnbr,fire.shp)
+  
+  names(sev) <- r
+  
+  return(sev)
+  
+}
+
+# function to load, mask, reclassify rdnbr based on Harvey et al. 2016 cutoffs
+reclass_rdnbr <- function(r) {
+  
+  # read in burn boundary
+  fire.shp <- st_read(list.files(paste0("data/MTBS/MTBS_rdnbr/",r), pattern="burn_bndy.shp",full.names=TRUE))
+  
+  # read in rdnbr
+  rdnbr <- raster(list.files(paste0("data/MTBS/MTBS_rdnbr/",r), pattern="rdnbr.tif",full.names=TRUE))
+  
+  # mask
+  rdnbr.mask <- mask(rdnbr, fire.shp)
+  
+  # reclassify rdnbr per Harvey et al. 2016
+  # 1 for unburned (<0), 2 low (0-288), 3 mod (288-675), 4 stand-replacing (675-2000), 5 too high/outlier (>2000)
+  # using rdnbr cutoff of 0 for unburned, to include unburned areas within perimeter that would
+  # be better plot pairs due to closer proximity to short-interval, < 0 rdnbr likely unburned
+  rdnbr.reclass <- reclassify(rdnbr.mask, matrix(c(-Inf,0,1,0,288,2,288,675,3,675,2000,4,2000,Inf,NA)))
+  
+  return(rdnbr.reclass)
+  
+}
+
+### read in and reclassify rdnbr rasters
+sev.out=raster()
+
+for (j in 1:dim(fire.screened)[1]) {
+  
+  print(j)
+  fid1 <- tolower(fire.screened[j,]$Event_ID_1)
+  fid2 <- tolower(fire.screened[j,]$Event_ID_2)
+  
+  # read in reclassified rdnbr for second fire
+  sev2 <- extend(reclass_rdnbr(fid2),ext.out)
+  
+  # read in reclassified rdnbr for first fire
+  # exclude fires not in mtbs record
+  if(!fid1 %in% c("198117","198152","1974-wygtp-4009","1978-wygtp-8005","1981-wygtp-1903")) {
+    sev1 <- extend(reclass_rdnbr(fid1),ext.out) 
+    # mask fire 1 only to reburned area
+    fire.sub <- mtbs.fire2 %>%
+      filter(tolower(Event_ID)==fid2)
+    fire.aea <- st_transform(fire.sub, crs = crs(sev1))
+    sev1.mask <- mask(sev1,fire.aea)
+    
+    # remove unused classes, keep mod and hi
+    # 1st fire, keep mod and hi, set low to -5, set unburned and inc greenness to 0, set other to -5
+    sev1.class <- reclassify(sev1.mask, matrix(c(-Inf,1.9,0,
+                                                 1.9,2.9,-5,
+                                                 4.9,5.9,0,
+                                                 5.9,Inf,-5)))
+  } else {
+    # if not in mtbs just mask to reburned area
+    fire.sub <- mtbs.fire1 %>%
+      filter(tolower(Event_ID)==fid1)
+    fire.aea <- st_transform(fire.sub, crs = st_crs(sev2))
+    sev1.class <- mask(sev2,fire.aea)
+  }
+  
+  # 2nd fire, keep mod and hi, set low and to -5
+  sev2.class <- reclassify(sev2, matrix(c(-Inf,2.9,-5,
+                                          4.9,Inf,-5)))
+  
+  sev.temp <- sum(stack(sev1.class,sev2.class),na.rm=TRUE)
+  
+  # reclassify for output categories
+  # 8 is hi x hi, 7 is hi x mod (any order), 4 is long hi only x unburned short
+  sev.reclass <- reclassify(sev.temp, matrix(c(-Inf,3.9,NA,
+                                               5.9,6.1,NA)))
+  
+  # if multiple reburns for same fire, mask other reburns
+  multi.reburns <- fire.screened %>%
+    mutate(index = 1:nrow(.)) %>%
+    filter(tolower(Event_ID_2) == fid2) %>%
+    # exclude focal reburn from masking
+    filter(index != j)
+  
+  if(dim(multi.reburns)[1]>=1) {
+    # mask all other reburns
+    print("mask other reburns")
+    for(k in 1:dim(multi.reburns)[1]){
+      # get fid of reburn
+      reburn.fid <- multi.reburns[k,]$Event_ID_1
+      
+      # get shapefile of other reburn
+      reburn.mask <- mtbs.fire1 %>%
+        filter(Event_ID == as.character(reburn.fid)) %>%
+        st_transform(crs = crs(sev.reclass))
+      
+      # mask severity raster
+      sev.reclass <- mask(sev.reclass, reburn.mask, inverse=TRUE)
+    }
+    
+  }
+  
+  # stack on top of other rasters
+  sev.out <- stack(sev.out,sev.reclass)
+  
+}
+
+### add special case for fires where need LI plots within first fire perimeter
+# use dnbr6 unburned category to identify other options
+# Maple - N Fork
+nfork.fid <- unique(tolower(fire.screened[fire.screened$Incid_Name_1=="NORTH FORK",]$Event_ID_1))
+nfork.dnbr <- load_dnbr(nfork.fid)
+# mask n fork to outline of maple fire
+maple.shp <- mtbs.fire2 %>%
+  filter(Incid_Name=="MAPLE") %>%
+  st_transform(crs = crs(nfork.dnbr))
+nfork.mask <- mask(nfork.dnbr, maple.shp)
+# reclassify to unburned or increased greenness only, set these as 0 and everything else NA
+# unburned is 1, inc greenness is 5
+nfork.unb <- reclassify(nfork.mask, matrix(c(-Inf,0.9,NA,0.9,1.9,0,1.9,4.9,NA,4.9,5.9,0,5.9,Inf,NA)))
+# load maple rdnbr, stand-replacing only
+maple.fid <- unique(tolower(fire.screened[fire.screened$Incid_Name_2=="MAPLE",]$Event_ID_2))
+maple.rdnbr <- reclass_rdnbr(maple.fid)
+maple.hi <- reclassify(maple.rdnbr, matrix(c(-Inf,3.9,NA,3.9,4.9,4,4.9,Inf,NA)))
+# sum these two
+maple.temp <- sum(stack(extend(nfork.unb,ext.out),
+                        extend(maple.hi,ext.out)))
+# only retain long-interval high severity
+maple.reclass <- reclassify(maple.temp, matrix(c(-Inf,3.9,NA)))
+
+# Cygnet - N Fork
+cygnet.shp <- mtbs.fire2 %>%
+  filter(Incid_Name=="CYGNET") %>%
+  st_transform(crs = crs(nfork.dnbr))
+nforkc.mask <- mask(nfork.dnbr, cygnet.shp)
+# reclassify to unburned or increased greenness only, set these as 0 and everything else NA
+# unburned is 1, inc greenness is 5
+nforkc.unb <- reclassify(nforkc.mask, matrix(c(-Inf,0.9,NA,0.9,1.9,0,1.9,4.9,NA,4.9,5.9,0,5.9,Inf,NA)))
+# load maple rdnbr, stand-replacing only
+cygnet.fid <- unique(tolower(fire.screened[fire.screened$Incid_Name_2=="CYGNET",]$Event_ID_2))
+cygnet.rdnbr <- reclass_rdnbr(cygnet.fid)
+cygnet.hi <- reclassify(cygnet.rdnbr, matrix(c(-Inf,3.9,NA,3.9,4.9,4,4.9,Inf,NA)))
+# sum these two
+cygnet.temp <- sum(stack(extend(nforkc.unb,ext.out),
+                         extend(cygnet.hi,ext.out)))
+# only retain long-interval high severity
+cygnet.reclass <- reclassify(cygnet.temp, matrix(c(-Inf,3.9,NA)))
+
+# add these to sev.out raster
+sev.out <- stack(sev.out, maple.reclass, cygnet.reclass)
+
+### combine all. classes:
+# 4 for stand-replacing in 2nd fire only
+# 7 for any combo of mod x hi severity
+# 8 for stand-replacing double burns (stand-replacing both times)
+
+sev.sum <- max(sev.out,na.rm=TRUE)
+
+# clean up
+rm(sev.out)
+
+### write raster - commented out for Rmd
+# writeRaster(sev.sum,"processed_data/fire_selection/rdnbr_reburns_all.tif", format="GTiff",overwrite=TRUE)
+```
+```{r plot-sev-raster }
+# reload raster if needed
+sev.sum <- raster("processed_data/fire_selection/rdnbr_reburns_all.tif")
+
+plot(sev.sum)
+```
+
+## 6. Final selected fires
+
+Section 6 of this script loads the final selected list of fires that was sampled in 2021 and creates shapefiles with the final perimeters for fire 1, fire 2, and reburned area.
+
+```{r final-fires, results="hide", message=FALSE, warning=FALSE}
+
+#####
+# 6. final sampled fires for 2021 field season
+#####
+
+### read in shapefiles if needed
+fire.select <- st_read("processed_data/fire_selection/fire_intersection.shp")
+
+mtbs.fire1 <- st_read("processed_data/fire_selection/fire1.shp")
+mtbs.fire2 <- st_read("processed_data/fire_selection/fire2.shp")
+
+# read in derby fire perimeter, cut off by gye outline
+derby.in <- st_read("data/MTBS/MTBS_rdnbr/mt4559210981020060822/mt4559210981020060822_20060708_20070711_burn_bndy.shp") %>%
+  st_transform(crs=st_crs(mtbs.fire2)) %>%
+  rename(Event_ID = Fire_ID,
+         Incid_Name = Fire_Name) %>%
+  mutate(Incid_Type = "Wildfire",
+         Map_Prog = "MTBS",
+         BurnBndHa = Acres*0.4047,
+         Ig_Date = paste(Year,StartMonth,StartDay,sep="-")) %>%
+  dplyr::select(c(Event_ID,Incid_Name,Incid_Type,Map_Prog,BurnBndHa,Ig_Date,Year,geometry))
+
+### read in final fire selection
+fire.final <- read.csv("processed_data/fire_selection/fire_intersection_df_final.csv")
+
+fire1.out <- mtbs.fire1 %>%
+  filter(as.character(Event_ID) %in% c(as.character(fire.final$Event_ID_1))) 
+  
+fire2.out <- mtbs.fire2 %>%
+  filter(as.character(Event_ID) %in% c(as.character(fire.final$Event_ID_2)))%>%
+  # also substitute derby perimeter
+  filter(!as.character(Event_ID) %in% c(as.character(derby.in$Event_ID))) %>%
+  rbind(derby.in)
+
+### final sampled shapefile
+fire.intout <- st_intersection(fire1.out, fire2.out) %>%
+  # remove reburns not sampled
+  filter(!(Incid_Name=="CLOVER" & Incid_Name.1=="YELLOWSTONE COMPLEX (TERN)")) %>%
+  filter(!(Incid_Name=="PELICAN" & Incid_Name.1=="YELLOWSTONE COMPLEX (TERN)")) %>%
+  filter(!(Incid_Name=="PELICAN" & Incid_Name.1=="EAST COMPLEX (EAST)")) %>%
+  filter(!(Incid_Name=="WATERFALLS" & Incid_Name.1=="BERRY"))
+
+### write out - commented out for Rmd
+# st_write(fire1.out, "processed_data/fire_selection/fire1_final.shp")
+# st_write(fire2.out, "processed_data/fire_selection/fire2_final.shp")
+# st_write(fire.intout, "processed_data/fire_selection/fire_intersection_final.shp")
+
+plot(fire1.out[1], col="pink") # fire 1
+plot(fire2.out[1], col="darkred") # fire 2
+plot(fire.intout[1], col="red") # reburn
+
+```

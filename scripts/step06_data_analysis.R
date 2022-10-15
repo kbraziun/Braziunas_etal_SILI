@@ -75,6 +75,10 @@ scho.in <- read.csv("data/field_plots_2021/cleaned_data/Schoennagel_etal2003_cle
 terra.in <- read.csv("processed_data/climate/terraclim.csv")
 terra.anom <- read.csv("processed_data/climate/terraclim_def_vpd_anom.csv")
 
+# dem and gye outline
+dem <- raster("data/nr_gye/nr_dem_utm_30m.tif")
+gye <- st_read("data/nr_gye/GYE_outline.shp", crs = crs(dem)) # same crs, but updating proj4string
+
 # biomass and fuels
 fuels.in <- read.csv("processed_data/biomass_fuels/biomass_fuels.csv")
 
@@ -274,7 +278,8 @@ counts.sp <- counts.plot %>%
   mutate(pres = ifelse(stems_ha>0,1,0)) %>%
   group_by(Plot_pair,Plot_code,Fire_interval,Sample_year,Species) %>%
   # sum across stem type, code for 1 if present
-  summarise(stems_ha = sum(stems_ha), pres = max(pres)) 
+  summarise(stems_ha = sum(stems_ha), pres = max(pres)) %>%
+  arrange(Plot_pair,Fire_interval,Species)
 
 # summary statistics
 counts.sp %>%
@@ -379,6 +384,7 @@ covstats %>%
 # dharma tests
 resids <- simulateResiduals(fit, n=100)
 testResiduals(resids)
+plot(resids)
 testZeroInflation(resids)
 
 # gaussian: poorly aligns with sim quantiles, 0s; fails some dharma cks, zero inflation test
@@ -413,7 +419,7 @@ zinb.test <- function(spec.in) {
   fit.sp <- zeroinfl(stems_ha~Fire_interval, data=counts.nb, dist="negbin")
   
   # test matched data
-  return(coeftest(fit.sp, vcov. = vcovCL, cluster=~Plot_pair))
+  return(coeftest(fit.sp, vcov. = vcovCL, df=32, cluster=~Plot_pair))
 }
 
 zinb.test("ABLA")
@@ -620,11 +626,6 @@ write.csv(con.diff, "analysis/q1_postfire_regen/pair_conifer_diff_full.csv",row.
 
 ### h1c: we expect other factors to mediate the importance of SI and LI fire
 
-### this section will not run, processed inputs are reloaded later
-# dem and gye outline
-dem <- raster("data/nr_gye/nr_dem_utm_30m.tif")
-gye <- st_read("data/nr_gye/GYE_outline.shp", crs = crs(dem)) # same crs, but updating proj4string
-
 ### calculate other predictors: topographic indexes
 dem.gye <- crop(dem,gye) %>% mask(gye)
 
@@ -681,10 +682,6 @@ con.all <- counts.con %>%
 
 # write out
 write.csv(con.all, "analysis/q1_postfire_regen/conifer_regen_predictors.csv",row.names=FALSE)
-### end code that relies on external DEM
-
-# reload predictors
-con.all <- read.csv("analysis/q1_postfire_regen/conifer_regen_predictors.csv")
 
 ### identify and exclude highly correlated predictors
 corr.mat <- con.all %>%
@@ -787,9 +784,12 @@ coef(model.noclim, 11)
 # Elev_high takes place of climate, Unburned x SI fire interaction remains in top models
 
 ### results
+# set min bic
+min_bic <- min(out$bic)
+
 mod_results <- function(mod_nbr, mod_name) {
   return(data.frame(mod_n = mod_nbr,
-                    bic = out[mod_nbr,1],
+                    delta_bic = out[mod_nbr,1] - min_bic,
                     adjrsq = summary(mod_name)$adj.r.squared) %>%
            cbind(data.frame(pred = names(mod_name$coefficients), 
                             coef = mod_name$coefficients,
@@ -805,6 +805,32 @@ mod.out <- mod_results(1,mod1) %>%
 
 # write out
 write.csv(mod.out, "analysis/q1_postfire_regen/conifer_regen_models.csv", row.names=FALSE)
+
+# full list of ranked models
+# delta bic
+allmod.out <- out %>%
+  mutate(delta_bic = bic-min_bic,
+         coef=NA)
+
+# coefficients
+for(i in 1:dim(out)[1]) {
+  
+  print(i)
+  model_n <- out[i,]$model_n
+  coef <- vector()
+  
+  for(j in 1:length(coef(model.subsets,model_n))) {
+    print(j)
+    coef_value <- round(coef(model.subsets,model_n)[j],2)
+    coef_name <- names(coef(model.subsets,model_n)[j])
+    coef <- paste(coef,coef_value,coef_name)
+  }
+  
+  allmod.out[i,]$coef <- coef
+  
+}
+
+write.csv(allmod.out, "analysis/q1_postfire_regen/conifer_regen_models_full_list.csv",row.names=FALSE)
 
 ####
 # 4. Q2: How do forest biomass and fuels vary following short v. long-interval fire?

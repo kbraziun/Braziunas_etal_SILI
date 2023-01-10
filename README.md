@@ -5,7 +5,7 @@
 This readme gives an overview of directory structure, files, and steps for recreating
 outputs and analyses associated with Braziunas et al. in review.
 
-**Manuscript citation:** Braziunas, K.H., N.G. Kiel, and M.G. Turner. In Review. Less fuel for the next fire? Warmer-drier climate amplifies effects of short-interval fire on forest recovery. Ecology.
+**Manuscript citation:** Braziunas, K.H., N.G. Kiel, and M.G. Turner. In Review. Less fuel for the next fire? Short-interval fire delays forest recovery and interacting drivers amplify effects. Ecology.
 
 ## platforms
 

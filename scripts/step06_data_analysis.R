@@ -72,7 +72,6 @@ scho.in <- read.csv("data/field_plots_2021/cleaned_data/Schoennagel_etal2003_cle
   dplyr::select(c(Plot_pair,Plot_code,Easting,Northing,Aspect_deg,Slope_deg,Elev_m,Unburned_dist_m,Fire_year_1,Fire_year_2,FRI,TSF,Fire_interval,Stem_type,Species,stems_ha,Sample_year))
 
 # climate data
-terra.in <- read.csv("processed_data/climate/terraclim.csv")
 terra.anom <- read.csv("processed_data/climate/terraclim_def_vpd_anom.csv")
 
 # dem and gye outline
@@ -455,14 +454,13 @@ write.csv(counts.summ, "analysis/q1_postfire_regen/postfire_regen_summary_stats.
 
 ### average plot characteristics for each pair
 pair.clim <- plots.all %>%
-  left_join(terra.in, by=c("Plot_code","Fire_year_2")) %>%
-  left_join(terra.anom, by=c("Plot_code","Fire_year_2","ann_def_mm_norm","summer_vpd_kpa_norm")) %>%
+  left_join(terra.anom, by=c("Plot_code","Fire_year_2")) %>%
   # remove unneeded columns
   dplyr::select(-c(Plot_code:Aspect_deg,Unburned_dist_m:Fire_year_1,FRI,Fire_interval,Sample_year)) %>%
   # average by plot pair
   group_by(Plot_pair) %>%
   summarise(FRI_shortonly = max(FRI_shortonly,na.rm=TRUE),
-            across(c(Slope_deg:Aspect_NE,ann_def_mm_pf1:anom_summer_vpd_zscore),~mean(.)))
+            across(c(Slope_deg:Aspect_NE,ann_def_mm_norm:anom_summer_vpd_zscore),~mean(.)))
 
 ### for this analysis, focus on counts of live conifer regen only
 counts.con <- counts.sp %>%
@@ -532,22 +530,11 @@ con.diff %>%
 # not consistent: greater abs differences associated with longer short FRIs (but no corr with rel diff); greater rel diff weakly assoc with shallower slopes (but very weak corr with abs diff)
 
 # second: climate predictors
-# post-fire climate
-con.diff %>%
-  # plot as cube root for better visualization
-  mutate(pair_diff_cuberoot = sign(pair_diff)*abs(pair_diff)^(1/3)) %>% 
-  pivot_longer(c(ann_def_mm_pf1:grow_prec_mm_pf3)) %>%
-  ggplot(aes(y=pair_diff_cuberoot,x=value)) +
-  facet_wrap(~name, scales="free_x") +
-  stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
-  geom_point() +
-  theme_bw()
-
 # climate norms
 con.diff %>%
   # plot as cube root for better visualization
   mutate(pair_diff_cuberoot = sign(pair_diff)*abs(pair_diff)^(1/3)) %>% 
-  pivot_longer(c(ann_def_mm_norm:grow_prec_mm_norm)) %>%
+  pivot_longer(c(ann_def_mm_norm,summer_vpd_kpa_norm)) %>%
   ggplot(aes(y=pair_diff_cuberoot,x=value)) +
   facet_wrap(~name, scales="free_x") +
   stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
@@ -564,22 +551,13 @@ con.diff %>%
   stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
   geom_point() +
   theme_bw()
-# strongest correlations with climate water def norm, then summer vpd, max temp, grow temp norms
+# strongest correlations with climate water def norm, then summer vpd
 # summer vpd anomaly increases differences; def anom only weakly associated
 
 # relative difference
-# post-fire climate
-con.diff %>%
-  pivot_longer(c(ann_def_mm_pf1:grow_prec_mm_pf3)) %>%
-  ggplot(aes(y=rel_diff,x=value)) +
-  facet_wrap(~name, scales="free_x") +
-  stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
-  geom_point() +
-  theme_bw()
-
 # climate norms
 con.diff %>%
-  pivot_longer(c(ann_def_mm_norm:grow_prec_mm_norm)) %>%
+  pivot_longer(c(ann_def_mm_norm,summer_vpd_kpa_norm)) %>%
   ggplot(aes(y=rel_diff,x=value)) +
   facet_wrap(~name, scales="free_x") +
   stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
@@ -1051,33 +1029,6 @@ t.test(fuels.test[fuels.test$name=="bm_1000h_rotten_Mg_ha",]$Long^(1/3),fuels.te
 # cross ck with wilcox, if not agree reason to pause
 wilcox.test(fuels.test[fuels.test$name=="bm_1000h_rotten_Mg_ha",]$Long,fuels.test[fuels.test$name=="bm_1000h_rotten_Mg_ha",]$Short, 
             alternative="two.sided", paired=TRUE) # p = 0.49
-
-### are differences also amplified at warmer-drier sites?
-fuels.test %>%
-  filter(name %in% c("live_ag_total_Mg_ha","dead_woody_total_Mg_ha")) %>%
-  mutate(rel_diff = pair_diff/Long) %>%
-  left_join(pair.clim, by=c("Plot_pair")) %>%
-  # only norm and anom defict and vpd
-  dplyr::select(c(Plot_pair:rel_diff, ann_def_mm_norm)) %>%
-  pivot_longer(c(pair_diff,rel_diff),names_to="response") %>%
-  ggplot(aes(y=value,x=ann_def_mm_norm)) +
-  facet_wrap(response~name, scales="free", ncol=2) +
-  stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
-  geom_point() +
-  theme_bw()
-
-fuels.test %>%
-  filter(name %in% c("live_ag_total_Mg_ha","dead_woody_total_Mg_ha")) %>%
-  mutate(rel_diff = pair_diff/Long) %>%
-  left_join(pair.clim, by=c("Plot_pair")) %>%
-  # only norm and anom defict and vpd
-  dplyr::select(c(Plot_pair:rel_diff, ann_def_mm_norm,summer_vpd_kpa_norm,anom_def_zscore,anom_summer_vpd_zscore)) %>%
-  pivot_longer(c(ann_def_mm_norm:anom_summer_vpd_zscore),names_to="clim") %>%
-  ggplot(aes(y=rel_diff,x=value)) +
-  facet_wrap(clim~name, scales="free", ncol=2) +
-  stat_cor(method="spearman", cor.coef.name="rho", p.digits=1, label.sep=",") +
-  geom_point() +
-  theme_bw()
 
 ### dead wood proportions: how allocated by size class across dwd and snags?
 
